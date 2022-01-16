@@ -109,9 +109,7 @@ module NextActionsDAL {
             rowZeroIndexed
         );
 
-        let numberOfColumns:number = Object.getOwnPropertyNames(newRow).length;
-        let targetRange = SpreadsheetApp.getActive().getSheetByName('Next Actions').getRange(newRow.rowZeroIndexed+1, 1, 1, numberOfColumns); 
-        targetRange.setValues([[
+        let valuesToInsert = [
             newRow.id,
             newRow.name,
             newRow.description,
@@ -126,6 +124,9 @@ module NextActionsDAL {
             newRow.isDiplayed,
             newRow.parentFocus,
             newRow.priority
-        ]]);
+        ];
+        let numberOfColumns:number = valuesToInsert.length; // don't include the row count
+        let targetRange = SpreadsheetApp.getActive().getSheetByName('Next Actions').getRange(newRow.rowZeroIndexed+1, 1, 1, numberOfColumns); 
+        targetRange.setValues([valuesToInsert]);
     }
 }

@@ -46,4 +46,10 @@ module RecurringActionDAL {
 
         return recurringActions;
     }
+
+    export function UpdateNextOccurrence(nextAction:RecurringAction, newValue:any)
+    {    
+        SpreadsheetApp.getActive().getSheetByName('Recurring Actions').getRange(nextAction.rowZeroIndexed+1, columnIndices_ZeroIndexed.nextOccurrence+1).setValue(newValue);;
+    }
+
 }

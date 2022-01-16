@@ -49,6 +49,7 @@ function AddRecurringActions ()
       if (row.nextOccurrence < DateAccessor.Today())
       {
         NextActionsDAL.AddRow(row.name, row.description, row.priority, row.childOf, row.targetTheme, row.points);
+        RecurringActionDAL.UpdateNextOccurrence(row, DateAccessor.GetDateXDaysFromNow(row.frequencyInDays));
       }
     }
   )
