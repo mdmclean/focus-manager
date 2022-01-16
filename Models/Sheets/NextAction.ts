@@ -1,5 +1,3 @@
-
-
 class NextAction {
     id: string;
     name: string;
@@ -16,7 +14,6 @@ class NextAction {
     parentFocus: string; 
     originalPriority: number; 
     rowZeroIndexed: number;
-    columnZeroIndexed: number;
 
     constructor(id: string,
         name: string,

@@ -62,6 +62,13 @@ module NextActionsDAL {
         return nextActions;
     }
 
+    function GetNumberOfRows() : number {
+        let numberOfHeaderRows:number = 1; 
+        var countOfRows =  SpreadsheetApp.getActive().getSheetByName('Next Actions').getDataRange().getNumRows() - numberOfHeaderRows;
+
+        return countOfRows;
+    }
+
     export function UpdatePriority(nextAction:NextAction, newValue:number)
     {    
         SpreadsheetApp.getActive().getSheetByName('Next Actions').getRange(nextAction.rowZeroIndexed+1, columnIndices_ZeroIndexed.priority+1).setValue(newValue);;
@@ -70,5 +77,55 @@ module NextActionsDAL {
     export function UpdateIsDisplayed(nextAction:NextAction, newValue:boolean)
     {    
         SpreadsheetApp.getActive().getSheetByName('Next Actions').getRange(nextAction.rowZeroIndexed+1, columnIndices_ZeroIndexed.isDisplayed+1).setValue(newValue);;
+    }
+
+    export function AddRow(name:string, description:string, priority:number, childOf:string, theme:string, points:number) {
+        let rowZeroIndexed:number = GetNumberOfRows()+1; 
+        let id:string = "NA-" + rowZeroIndexed;
+
+        const effortCount = 0; 
+        const targetDate = null; 
+        const display = true;
+        const parentFocus = "";
+        const isDone = false;
+        const lastUpdated = DateAccessor.Today();
+
+
+        let newRow:NextAction = new NextAction(
+            id,
+            name,
+            description,
+            priority,
+            childOf,
+            isDone,
+            lastUpdated,
+            theme,
+            points,
+            effortCount,
+            targetDate,
+            display,
+            parentFocus,
+            priority,
+            rowZeroIndexed
+        );
+
+        let numberOfColumns:number = Object.getOwnPropertyNames(newRow).length;
+        let targetRange = SpreadsheetApp.getActive().getSheetByName('Next Actions').getRange(newRow.rowZeroIndexed+1, 1, 1, numberOfColumns); 
+        targetRange.setValues([[
+            newRow.id,
+            newRow.name,
+            newRow.description,
+            newRow.priority,
+            newRow.childOf,
+            newRow.isDone,
+            newRow.lastUpdated,
+            newRow.theme,
+            newRow.points,
+            newRow.effortCount,
+            newRow.targetDate,
+            newRow.isDiplayed,
+            newRow.parentFocus,
+            newRow.priority
+        ]]);
     }
 }
