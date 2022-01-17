@@ -10,12 +10,13 @@ function UpdatePriorities(nextActions:NextAction[], decayRate : number) {
   for (var i = 0; i < nextActions.length; i++) {
     if (nextActions[i].lastUpdated < DateAccessor.Yesterday())
     {
-      NextActionsDAL.UpdatePriority(nextActions[i], nextActions[i].priority+decayRate)
+      nextActions[i].priority = nextActions[i].priority+decayRate;
+      NextActionsDAL.Update(nextActions[i]);
     }
     else 
     {
-      NextActionsDAL.UpdatePriority(nextActions[i], nextActions[i].originalPriority)
-
+      nextActions[i].priority =  nextActions[i].originalPriority;
+      NextActionsDAL.Update(nextActions[i]);
     }
   }
 }
@@ -33,11 +34,13 @@ function ShowTopFivePriorities (nextActions:NextAction[])
 
 function UpdateTopFive(nextActions: NextAction[]) {
   for (var i = 0; i < Math.min(4, nextActions.length); i++) {
-    NextActionsDAL.UpdateIsDisplayed(nextActions[i], true);
+    nextActions[i].isDiplayed = true;
+    NextActionsDAL.Update(nextActions[i]);
   }
 
   for (var k = 5; k < nextActions.length; k++) {
-    NextActionsDAL.UpdateIsDisplayed(nextActions[i], false);
+    nextActions[k].isDiplayed = false;
+    NextActionsDAL.Update(nextActions[k]);
   }
 }
 
@@ -49,7 +52,8 @@ function AddRecurringActions ()
       if (row.nextOccurrence < DateAccessor.Today())
       {
         NextActionsDAL.AddRow(row.name, row.description, row.priority, row.childOf, row.targetTheme, row.points);
-        RecurringActionDAL.UpdateNextOccurrence(row, DateAccessor.GetDateXDaysFromNow(row.frequencyInDays));
+        row.nextOccurrence = DateAccessor.GetDateXDaysFromNow(row.frequencyInDays);
+        RecurringActionDAL.Update(row);
       }
     }
   )

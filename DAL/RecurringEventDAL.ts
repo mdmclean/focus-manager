@@ -47,9 +47,23 @@ module RecurringActionDAL {
         return recurringActions;
     }
 
-    export function UpdateNextOccurrence(nextAction:RecurringAction, newValue:any)
+    export function Update(updatedRecurringAction:RecurringAction)
     {    
-        SpreadsheetApp.getActive().getSheetByName('Recurring Actions').getRange(nextAction.rowZeroIndexed+1, columnIndices_ZeroIndexed.nextOccurrence+1).setValue(newValue);;
+        let newValue = [[
+            updatedRecurringAction.id,
+            updatedRecurringAction.targetTheme,
+            updatedRecurringAction.frequencyInDays,
+            updatedRecurringAction.nextOccurrence,
+            updatedRecurringAction.name,
+            updatedRecurringAction.description,
+            updatedRecurringAction.priority,
+            updatedRecurringAction.childOf,
+            updatedRecurringAction.points
+        ]];
+
+        let numberOfColumns = newValue[0].length;
+
+        SpreadsheetApp.getActive().getSheetByName('Recurring Actions').getRange(updatedRecurringAction.rowZeroIndexed+1, 1, 1, numberOfColumns).setValues(newValue);;
     }
 
 }

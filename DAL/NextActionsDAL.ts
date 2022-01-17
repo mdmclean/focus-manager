@@ -16,9 +16,11 @@ module NextActionsDAL {
         parentFocus: 12,
         originalPriority: 13,
     };
+
+    const nextActionTableName = 'Next Actions';
     
     export function GetRows() : NextAction[] {
-        var naRange =  SpreadsheetApp.getActive().getSheetByName('Next Actions').getDataRange().getValues();
+        var naRange =  SpreadsheetApp.getActive().getSheetByName(nextActionTableName).getDataRange().getValues();
 
        naRange.shift(); // remove header row
 
@@ -64,19 +66,33 @@ module NextActionsDAL {
 
     function GetNumberOfRows() : number {
         let numberOfHeaderRows:number = 1; 
-        var countOfRows =  SpreadsheetApp.getActive().getSheetByName('Next Actions').getDataRange().getNumRows() - numberOfHeaderRows;
+        var countOfRows =  SpreadsheetApp.getActive().getSheetByName(nextActionTableName).getDataRange().getNumRows() - numberOfHeaderRows;
 
         return countOfRows;
     }
 
-    export function UpdatePriority(nextAction:NextAction, newValue:number)
+    export function Update(updatedNextAction:NextAction)
     {    
-        SpreadsheetApp.getActive().getSheetByName('Next Actions').getRange(nextAction.rowZeroIndexed+1, columnIndices_ZeroIndexed.priority+1).setValue(newValue);;
-    }
+        let newValue = [[
+            updatedNextAction.id,
+            updatedNextAction.name,
+            updatedNextAction.description,
+            updatedNextAction.priority,
+            updatedNextAction.childOf,
+            updatedNextAction.isDone,
+            updatedNextAction.lastUpdated,
+            updatedNextAction.theme,
+            updatedNextAction.points,
+            updatedNextAction.effortCount,
+            updatedNextAction.targetDate,
+            updatedNextAction.isDiplayed,
+            updatedNextAction.parentFocus,
+            updatedNextAction.originalPriority
+        ]];
 
-    export function UpdateIsDisplayed(nextAction:NextAction, newValue:boolean)
-    {    
-        SpreadsheetApp.getActive().getSheetByName('Next Actions').getRange(nextAction.rowZeroIndexed+1, columnIndices_ZeroIndexed.isDisplayed+1).setValue(newValue);;
+        let numberOfColumns = newValue[0].length;
+
+        SpreadsheetApp.getActive().getSheetByName(nextActionTableName).getRange(updatedNextAction.rowZeroIndexed+1, 1, 1, numberOfColumns).setValues(newValue);;
     }
 
     export function AddRow(name:string, description:string, priority:number, childOf:string, theme:string, points:number) {
@@ -126,7 +142,7 @@ module NextActionsDAL {
             newRow.priority
         ];
         let numberOfColumns:number = valuesToInsert.length; // don't include the row count
-        let targetRange = SpreadsheetApp.getActive().getSheetByName('Next Actions').getRange(newRow.rowZeroIndexed+1, 1, 1, numberOfColumns); 
+        let targetRange = SpreadsheetApp.getActive().getSheetByName(nextActionTableName).getRange(newRow.rowZeroIndexed+1, 1, 1, numberOfColumns); 
         targetRange.setValues([valuesToInsert]);
     }
 }
