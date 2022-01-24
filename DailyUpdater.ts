@@ -33,7 +33,7 @@ function ShowTopFivePriorities (nextActions:NextAction[])
 }
 
 function UpdateTopFive(nextActions: NextAction[]) {
-  for (var i = 0; i < Math.min(4, nextActions.length); i++) {
+  for (var i = 0; i < Math.min(5, nextActions.length); i++) {
     nextActions[i].isDiplayed = true;
     NextActionsDAL.Update(nextActions[i]);
   }

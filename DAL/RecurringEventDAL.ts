@@ -22,7 +22,7 @@ module RecurringActionDAL {
                 let id:string = row[columnIndices_ZeroIndexed.id];
                 let targetTheme:string = row[columnIndices_ZeroIndexed.targetTheme];
                 let frequencyInDays:number = row[columnIndices_ZeroIndexed.frequencyInDays];
-                let nextOccurrence:Date = row[columnIndices_ZeroIndexed.frequencyInDays];
+                let nextOccurrence:Date = row[columnIndices_ZeroIndexed.nextOccurrence];
                 let name:string = row[columnIndices_ZeroIndexed.name];
                 let description:string = row[columnIndices_ZeroIndexed.description];
                 let priority:number = row[columnIndices_ZeroIndexed.priority];
