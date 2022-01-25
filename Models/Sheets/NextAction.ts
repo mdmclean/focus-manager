@@ -11,9 +11,10 @@ class NextAction {
     effortCount: number; 
     targetDate: Date; 
     isDiplayed: boolean;
-    parentFocus: string; 
     originalPriority: number; 
     rowZeroIndexed: number;
+    link:string;
+    displayOrder: number;
 
     constructor(id: string,
         name: string,
@@ -27,9 +28,10 @@ class NextAction {
         effortCount: number, 
         targetDate: Date,
         isDiplayed: boolean,
-        parentFocus: string, 
         originalPriority: number,
-        rowZeroIndexed: number
+        rowZeroIndexed: number,
+        link:string, 
+        displayOrder: number
     ) {
         this.id = id; 
         this.name = name;
@@ -43,8 +45,9 @@ class NextAction {
         this.effortCount = effortCount; 
         this.targetDate = targetDate; 
         this.isDiplayed = isDiplayed; 
-        this.parentFocus = parentFocus;
         this.originalPriority = originalPriority; 
         this.rowZeroIndexed = rowZeroIndexed; 
+        this.link = link;
+        this.displayOrder = displayOrder;
     }
 }

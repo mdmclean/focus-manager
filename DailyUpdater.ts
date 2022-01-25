@@ -1,47 +1,28 @@
 
 function DailyUpdater() {
-  var nextActions = NextActionsDAL.GetRows();
   AddRecurringActions();
-  UpdatePriorities(nextActions, 0.1);
-  ShowTopFivePriorities (nextActions);
+
+  var nextActions = NextActionsDAL.GetRows();
+  UpdateDisplayOrder(nextActions.filter(row => row.theme === "Home"));
+  UpdateDisplayOrder(nextActions.filter(row => row.theme === "Work"));
 }
 
-function UpdatePriorities(nextActions:NextAction[], decayRate : number) {
-  for (var i = 0; i < nextActions.length; i++) {
-    if (nextActions[i].lastUpdated < DateAccessor.Yesterday())
-    {
-      nextActions[i].priority = nextActions[i].priority+decayRate;
-      NextActionsDAL.Update(nextActions[i]);
-    }
-    else 
-    {
-      nextActions[i].priority =  nextActions[i].originalPriority;
-      NextActionsDAL.Update(nextActions[i]);
-    }
-  }
-}
+function UpdateDisplayOrder(nextActions:NextAction[]) {
 
-
-function ShowTopFivePriorities (nextActions:NextAction[])
-{
   nextActions = nextActions.filter(row => row.isDone === false);
-  nextActions = nextActions.sort((x, y) => x.priority - y.priority);
+  nextActions = nextActions.sort((x, y) => PrioritizationWeighting(x) - PrioritizationWeighting(y));
 
-  UpdateTopFive(nextActions.filter(row => row.theme === "Work"));
-  UpdateTopFive(nextActions.filter(row => row.theme === "Home"));
-
+  for (var i = 0; i < nextActions.length; i++) {
+      nextActions[i].displayOrder = i+1; // 1 index order
+      NextActionsDAL.Update(nextActions[i]);
+  }
 }
 
-function UpdateTopFive(nextActions: NextAction[]) {
-  for (var i = 0; i < Math.min(5, nextActions.length); i++) {
-    nextActions[i].isDiplayed = true;
-    NextActionsDAL.Update(nextActions[i]);
-  }
+function PrioritizationWeighting(action:NextAction) : number
+{
+  let daysSinceUpdated = DateHelper.DaysBetween(DateAccessor.Today(), action.lastUpdated);
 
-  for (var k = 5; k < nextActions.length; k++) {
-    nextActions[k].isDiplayed = false;
-    NextActionsDAL.Update(nextActions[k]);
-  }
+  return daysSinceUpdated + action.displayOrder + 10 * action.priority;
 }
 
 function AddRecurringActions ()

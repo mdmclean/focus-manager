@@ -13,8 +13,9 @@ module NextActionsDAL {
         effortCount: 9,
         targetDate: 10,
         isDisplayed: 11,
-        parentFocus: 12,
-        originalPriority: 13,
+        originalPriority: 12,
+        link: 13,
+        displayOrder: 14
     };
 
     const nextActionTableName = 'Next Actions';
@@ -38,8 +39,9 @@ module NextActionsDAL {
                 let effortCount:number = row[columnIndices_ZeroIndexed.effortCount];
                 let targetDate:Date = row[columnIndices_ZeroIndexed.targetDate];
                 let isDisplayed:boolean = row[columnIndices_ZeroIndexed.isDisplayed]; 
-                let parentFocus:string = row[columnIndices_ZeroIndexed.parentFocus]; 
                 let originalPriority:number = row[columnIndices_ZeroIndexed.originalPriority];
+                let link:string = row[columnIndices_ZeroIndexed.link];
+                let displayOrder:number = row[columnIndices_ZeroIndexed.displayOrder];
 
                 return new NextAction(
                     id,
@@ -54,9 +56,10 @@ module NextActionsDAL {
                     effortCount,
                     targetDate,
                     isDisplayed,
-                    parentFocus,
                     originalPriority,
-                    rowNumber+1 // row 0 is header                      
+                    rowNumber+1, // row 0 is header
+                    link,   
+                    displayOrder              
                 )
             }
         );
@@ -86,8 +89,9 @@ module NextActionsDAL {
             updatedNextAction.effortCount,
             updatedNextAction.targetDate,
             updatedNextAction.isDiplayed,
-            updatedNextAction.parentFocus,
-            updatedNextAction.originalPriority
+            updatedNextAction.originalPriority,
+            updatedNextAction.link,
+            updatedNextAction.displayOrder
         ]];
 
         let numberOfColumns = newValue[0].length;
@@ -105,6 +109,8 @@ module NextActionsDAL {
         const parentFocus = "";
         const isDone = false;
         const lastUpdated = DateAccessor.Today();
+        const displayOrder = 1;
+        const link = "";
 
 
         let newRow:NextAction = new NextAction(
@@ -120,9 +126,10 @@ module NextActionsDAL {
             effortCount,
             targetDate,
             display,
-            parentFocus,
             priority,
-            rowZeroIndexed
+            rowZeroIndexed,
+            link,
+            displayOrder
         );
 
         let valuesToInsert = [
@@ -138,8 +145,9 @@ module NextActionsDAL {
             newRow.effortCount,
             newRow.targetDate,
             newRow.isDiplayed,
-            newRow.parentFocus,
-            newRow.priority
+            newRow.priority,
+            newRow.link,
+            newRow.displayOrder
         ];
         let numberOfColumns:number = valuesToInsert.length; // don't include the row count
         let targetRange = SpreadsheetApp.getActive().getSheetByName(nextActionTableName).getRange(newRow.rowZeroIndexed+1, 1, 1, numberOfColumns); 
