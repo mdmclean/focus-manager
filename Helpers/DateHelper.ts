@@ -5,4 +5,9 @@ module DateHelper {
 
         return Math.abs(Math.round(dateOne.getTime() - dateTwo.getTime()) / (oneDay));
     }
+
+    export function IsDateValid(dateToTest:Date) : boolean
+    {
+        return dateToTest !== null && dateToTest !== undefined && dateToTest instanceof Date && !isNaN(dateToTest.getTime());
+    }
 }

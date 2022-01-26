@@ -10,7 +10,7 @@ function DailyUpdater() {
 function UpdateDisplayOrder(nextActions:NextAction[]) {
 
   nextActions = nextActions.filter(row => row.isDone === false);
-  nextActions = nextActions.sort((x, y) => PrioritizationWeighting(x) - PrioritizationWeighting(y));
+  nextActions = nextActions.sort((x, y) => x.orderingWeightingScore - y.orderingWeightingScore);
 
   for (var i = 0; i < nextActions.length; i++) {
       nextActions[i].displayOrder = i+1; // 1 index order
@@ -18,12 +18,6 @@ function UpdateDisplayOrder(nextActions:NextAction[]) {
   }
 }
 
-function PrioritizationWeighting(action:NextAction) : number
-{
-  let daysSinceUpdated = DateHelper.DaysBetween(DateAccessor.Today(), action.lastUpdated);
-
-  return daysSinceUpdated + action.displayOrder + 10 * action.priority;
-}
 
 function AddRecurringActions ()
 {

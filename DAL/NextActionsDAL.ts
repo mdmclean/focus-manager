@@ -15,7 +15,8 @@ module NextActionsDAL {
         isDisplayed: 11,
         originalPriority: 12,
         link: 13,
-        displayOrder: 14
+        displayOrder: 14,
+        snoozeUntil: 15
     };
 
     const nextActionTableName = 'Next Actions';
@@ -42,6 +43,7 @@ module NextActionsDAL {
                 let originalPriority:number = row[columnIndices_ZeroIndexed.originalPriority];
                 let link:string = row[columnIndices_ZeroIndexed.link];
                 let displayOrder:number = row[columnIndices_ZeroIndexed.displayOrder];
+                let snoozeUntil:Date = row[columnIndices_ZeroIndexed.snoozeUntil];
 
                 return new NextAction(
                     id,
@@ -59,7 +61,8 @@ module NextActionsDAL {
                     originalPriority,
                     rowNumber+1, // row 0 is header
                     link,   
-                    displayOrder              
+                    displayOrder,
+                    snoozeUntil    
                 )
             }
         );
@@ -74,29 +77,23 @@ module NextActionsDAL {
         return countOfRows;
     }
 
-    export function Update(updatedNextAction:NextAction)
+    export function Update(action:NextAction)
     {    
-        let newValue = [[
-            updatedNextAction.id,
-            updatedNextAction.name,
-            updatedNextAction.description,
-            updatedNextAction.priority,
-            updatedNextAction.childOf,
-            updatedNextAction.isDone,
-            updatedNextAction.lastUpdated,
-            updatedNextAction.theme,
-            updatedNextAction.points,
-            updatedNextAction.effortCount,
-            updatedNextAction.targetDate,
-            updatedNextAction.isDiplayed,
-            updatedNextAction.originalPriority,
-            updatedNextAction.link,
-            updatedNextAction.displayOrder
-        ]];
-
-        let numberOfColumns = newValue[0].length;
-
-        SpreadsheetApp.getActive().getSheetByName(nextActionTableName).getRange(updatedNextAction.rowZeroIndexed+1, 1, 1, numberOfColumns).setValues(newValue);;
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.id+1, action.id);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.name+1, action.name);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.description+1, action.description);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.priority+1, action.priority);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.childOf+1, action.childOf);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.isDone+1, action.isDone);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.lastUpdated+1, action.lastUpdated);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.theme+1, action.theme);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.points+1, action.points);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.effortCount+1, action.effortCount);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.targetDate+1, action.targetDate);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.isDisplayed+1, action.isDiplayed);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.originalPriority+1, action.originalPriority);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.link+1, action.link);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.snoozeUntil+1, action.snoozeUntil);
     }
 
     export function AddRow(name:string, description:string, priority:number, childOf:string, theme:string, points:number) {
@@ -106,11 +103,11 @@ module NextActionsDAL {
         const effortCount = 0; 
         const targetDate = null; 
         const display = true;
-        const parentFocus = "";
         const isDone = false;
         const lastUpdated = DateAccessor.Today();
         const displayOrder = 1;
         const link = "";
+        const snoozeUntil = null;
 
 
         let newRow:NextAction = new NextAction(
@@ -129,28 +126,16 @@ module NextActionsDAL {
             priority,
             rowZeroIndexed,
             link,
-            displayOrder
+            displayOrder,
+            snoozeUntil
         );
 
-        let valuesToInsert = [
-            newRow.id,
-            newRow.name,
-            newRow.description,
-            newRow.priority,
-            newRow.childOf,
-            newRow.isDone,
-            newRow.lastUpdated,
-            newRow.theme,
-            newRow.points,
-            newRow.effortCount,
-            newRow.targetDate,
-            newRow.isDiplayed,
-            newRow.priority,
-            newRow.link,
-            newRow.displayOrder
-        ];
-        let numberOfColumns:number = valuesToInsert.length; // don't include the row count
-        let targetRange = SpreadsheetApp.getActive().getSheetByName(nextActionTableName).getRange(newRow.rowZeroIndexed+1, 1, 1, numberOfColumns); 
-        targetRange.setValues([valuesToInsert]);
+        Update(newRow);
+    }
+
+    function UpdateNextActionCell(row:number, column:number, value:any) 
+    {
+        let targetRange = SpreadsheetApp.getActive().getSheetByName(nextActionTableName).getRange(row, column);
+        targetRange.setValue(value);
     }
 }
