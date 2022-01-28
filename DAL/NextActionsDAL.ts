@@ -16,7 +16,8 @@ module NextActionsDAL {
         originalPriority: 12,
         link: 13,
         displayOrder: 14,
-        snoozeUntil: 15
+        snoozeUntil: 15,
+        resolutionDate: 16
     };
 
     const nextActionTableName = 'Next Actions';
@@ -44,6 +45,7 @@ module NextActionsDAL {
                 let link:string = row[columnIndices_ZeroIndexed.link];
                 let displayOrder:number = row[columnIndices_ZeroIndexed.displayOrder];
                 let snoozeUntil:Date = row[columnIndices_ZeroIndexed.snoozeUntil];
+                let resolutionDate:Date = row[columnIndices_ZeroIndexed.resolutionDate];
 
                 return new NextAction(
                     id,
@@ -62,7 +64,8 @@ module NextActionsDAL {
                     rowNumber+1, // row 0 is header
                     link,   
                     displayOrder,
-                    snoozeUntil    
+                    snoozeUntil,
+                    resolutionDate
                 )
             }
         );
@@ -94,6 +97,8 @@ module NextActionsDAL {
         UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.originalPriority+1, action.originalPriority);
         UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.link+1, action.link);
         UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.snoozeUntil+1, action.snoozeUntil);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.displayOrder+1, action.displayOrder);
+        UpdateNextActionCell(action.rowZeroIndexed+1, columnIndices_ZeroIndexed.resolutionDate, action.resolutionDate);
     }
 
     export function AddRow(name:string, description:string, priority:number, childOf:string, theme:string, points:number) {
@@ -108,6 +113,7 @@ module NextActionsDAL {
         const displayOrder = 1;
         const link = "";
         const snoozeUntil = null;
+        const resolutionDate = null;
 
 
         let newRow:NextAction = new NextAction(
@@ -127,7 +133,8 @@ module NextActionsDAL {
             rowZeroIndexed,
             link,
             displayOrder,
-            snoozeUntil
+            snoozeUntil,
+            resolutionDate
         );
 
         Update(newRow);

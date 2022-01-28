@@ -17,6 +17,7 @@ class NextAction {
     displayOrder: number;
     snoozeUntil: Date;
     orderingWeightingScore: number;
+    resolutionDate: Date;
 
     constructor(id: string,
         name: string,
@@ -34,7 +35,8 @@ class NextAction {
         rowZeroIndexed: number,
         link:string, 
         displayOrder: number,
-        snoozeUntil: Date
+        snoozeUntil: Date,
+        resolutionDate: Date
     ) {
         this.id = id; 
         this.name = name;
@@ -54,6 +56,7 @@ class NextAction {
         this.displayOrder = displayOrder;
         this.snoozeUntil = snoozeUntil;
         this.orderingWeightingScore = PrioritizationWeighting(snoozeUntil, lastUpdated, displayOrder, priority, targetDate);
+        this.resolutionDate = resolutionDate;
     }
 }
 
