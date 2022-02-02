@@ -1,4 +1,8 @@
-module NextActionsDAL {
+import { NextAction } from "../Models/Sheets/NextAction";
+import { DateAccessor } from "./DateAccessor";
+
+
+export module NextActionsDAL {
     
     let columnIndices_ZeroIndexed = {
         id: 0,

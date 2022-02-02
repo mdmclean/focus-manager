@@ -1,4 +1,4 @@
-module DateAccessor {
+export module DateAccessor {
     export function Today ()
     {
         return new Date();

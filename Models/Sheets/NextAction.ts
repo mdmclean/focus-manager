@@ -1,4 +1,7 @@
-class NextAction {
+import { DateAccessor } from "../../DAL/DateAccessor";
+import { DateHelper } from "../../Helpers/DateHelper";
+
+export class NextAction {
     id: string;
     name: string;
     description: string; 

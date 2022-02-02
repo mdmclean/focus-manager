@@ -1,4 +1,4 @@
-module DateHelper {
+export module DateHelper {
     export function DaysBetween (dateOne:Date, dateTwo:Date) : number
     {
         const oneDay = 1000 * 60 * 60 * 24;

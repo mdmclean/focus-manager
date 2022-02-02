@@ -1,1 +1,5 @@
-ImportAutocomplete.js
+node_modules/**
+ImportAutocomplete.ts
+test/index.spec.ts 
+WeeklySummary.ts
+
