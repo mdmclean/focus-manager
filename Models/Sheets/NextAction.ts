@@ -65,7 +65,13 @@ export class NextAction {
 
 function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrder:number, priority:number, targetDate:Date) : number
 {
-  let daysSinceUpdated:number = DateHelper.DaysBetween(DateAccessor.Today(), lastUpdated);
+
+
+  let daysSinceUpdated:number = 0;
+  if (DateHelper.IsDateValid(snoozeUntil) && snoozeUntil > DateAccessor.Today())
+  {
+    daysSinceUpdated = DateHelper.DaysBetween(DateAccessor.Today(), lastUpdated);
+  }
 
   let daysUntilDoneSnoozing:number = 0;
   if (DateHelper.IsDateValid(snoozeUntil) && snoozeUntil > DateAccessor.Today())
