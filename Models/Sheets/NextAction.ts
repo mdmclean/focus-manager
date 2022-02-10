@@ -21,6 +21,9 @@ export class NextAction {
     snoozeUntil: Date;
     orderingWeightingScore: number;
     resolutionDate: Date;
+    createdDate: Date;
+    urgency: number; 
+    importance: number;
 
     constructor(id: string,
         name: string,
@@ -39,7 +42,10 @@ export class NextAction {
         link:string, 
         displayOrder: number,
         snoozeUntil: Date,
-        resolutionDate: Date
+        resolutionDate: Date,
+        createdDate: Date,
+        urgency: number,
+        importance: number
     ) {
         this.id = id; 
         this.name = name;
@@ -58,15 +64,16 @@ export class NextAction {
         this.link = link;
         this.displayOrder = displayOrder;
         this.snoozeUntil = snoozeUntil;
-        this.orderingWeightingScore = PrioritizationWeighting(snoozeUntil, lastUpdated, displayOrder, priority, targetDate);
+        this.orderingWeightingScore = PrioritizationWeighting(snoozeUntil, lastUpdated, displayOrder, priority, targetDate, urgency, importance);
         this.resolutionDate = resolutionDate;
+        this.createdDate = createdDate;
+        this.urgency = urgency;
+        this.importance = importance;
     }
 }
 
-function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrder:number, priority:number, targetDate:Date) : number
+function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrder:number, priority:number, targetDate:Date, urgency:number, importance:number) : number
 {
-
-
   let daysSinceUpdated:number = 0;
   if (DateHelper.IsDateValid(snoozeUntil) && snoozeUntil > DateAccessor.Today())
   {
@@ -85,6 +92,10 @@ function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrde
       daysPastTargetDate = DateHelper.DaysBetween(DateAccessor.Today(), targetDate);
   }
 
-  return daysSinceUpdated + displayOrder + priority + daysUntilDoneSnoozing*20 - daysPastTargetDate;
+  let sanitizedUrgency = urgency === undefined || urgency === null || urgency < 1 ? 1 : urgency;
+
+  let sanitizedImportance = importance === undefined || importance === null || importance < 1 ? 1 : importance;
+
+  return daysSinceUpdated + displayOrder + priority + daysUntilDoneSnoozing*1000 - daysPastTargetDate - sanitizedUrgency*10 - sanitizedImportance*5;
 }
 

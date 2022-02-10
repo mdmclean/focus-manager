@@ -1,5 +1,6 @@
 node_modules/**
 ImportAutocomplete.ts
 test/index.spec.ts 
+test/test-sheetsapi.ts
 WeeklySummary.ts
 

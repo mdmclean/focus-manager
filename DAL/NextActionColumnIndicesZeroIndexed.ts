@@ -18,7 +18,10 @@ export module NextActionColumnIndicesZeroIndex {
             link: 13,
             displayOrder: 14,
             snoozeUntil: 15,
-            resolutionDate: 16
+            resolutionDate: 16,
+            createdDate: 17,
+            urgency: 18,
+            importance: 19
         };
     }
 }

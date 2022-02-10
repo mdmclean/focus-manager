@@ -2,6 +2,7 @@ import { NextAction } from "../Models/Sheets/NextAction";
 import { DateAccessor } from "./DateAccessor";
 import { NextActionColumnIndicesZeroIndex } from "./NextActionColumnIndicesZeroIndexed";
 import { INextActionDataAccessor } from "./INextActionDataAccessor"
+import { DateHelper } from "../Helpers/DateHelper";
 
 
 export class NextActionsDAL implements INextActionDataAccessor {
@@ -15,25 +16,30 @@ export class NextActionsDAL implements INextActionDataAccessor {
 
        naRange.shift(); // remove header row
 
+        let colIndices = this.columnIndices_ZeroIndexed;
+
         var nextActions = naRange.map(
             function (row, rowNumber) {
-                let id:string = row[this.columnIndices_ZeroIndexed.id];
-                let name:string = row[this.columnIndices_ZeroIndexed.name];
-                let description:string = row[this.columnIndices_ZeroIndexed.description];
-                let priority:number = row[this.columnIndices_ZeroIndexed.priority];
-                let childOf:string = row[this.columnIndices_ZeroIndexed.childOf]; 
-                let isDone:boolean = row[this.columnIndices_ZeroIndexed.isDone];
-                let lastUpdated:Date = row[this.columnIndices_ZeroIndexed.lastUpdated];
-                let theme:string = row[this.columnIndices_ZeroIndexed.theme]; 
-                let points:number = row[this.columnIndices_ZeroIndexed.points]; 
-                let effortCount:number = row[this.columnIndices_ZeroIndexed.effortCount];
-                let targetDate:Date = row[this.columnIndices_ZeroIndexed.targetDate];
-                let isDisplayed:boolean = row[this.columnIndices_ZeroIndexed.isDisplayed]; 
-                let originalPriority:number = row[this.columnIndices_ZeroIndexed.originalPriority];
-                let link:string = row[this.columnIndices_ZeroIndexed.link];
-                let displayOrder:number = row[this.columnIndices_ZeroIndexed.displayOrder];
-                let snoozeUntil:Date = row[this.columnIndices_ZeroIndexed.snoozeUntil];
-                let resolutionDate:Date = row[this.columnIndices_ZeroIndexed.resolutionDate];
+                let id:string = row[colIndices.id];
+                let name:string = row[colIndices.name];
+                let description:string = row[colIndices.description];
+                let priority:number = row[colIndices.priority];
+                let childOf:string = row[colIndices.childOf]; 
+                let isDone:boolean = row[colIndices.isDone];
+                let lastUpdated:Date = row[colIndices.lastUpdated];
+                let theme:string = row[colIndices.theme]; 
+                let points:number = row[colIndices.points]; 
+                let effortCount:number = row[colIndices.effortCount];
+                let targetDate:Date = row[colIndices.targetDate];
+                let isDisplayed:boolean = row[colIndices.isDisplayed]; 
+                let originalPriority:number = row[colIndices.originalPriority];
+                let link:string = row[colIndices.link];
+                let displayOrder:number = row[colIndices.displayOrder];
+                let snoozeUntil:Date = row[colIndices.snoozeUntil];
+                let resolutionDate:Date = row[colIndices.resolutionDate];
+                let createdDate:Date = row[colIndices.createdDate];
+                let urgency: number = row[colIndices.urgency]; 
+                let importance: number = row[colIndices.importance];
 
                 return new NextAction(
                     id,
@@ -53,7 +59,10 @@ export class NextActionsDAL implements INextActionDataAccessor {
                     link,   
                     displayOrder,
                     snoozeUntil,
-                    resolutionDate
+                    resolutionDate,
+                    createdDate,
+                    urgency,
+                    importance
                 )
             }
         );
@@ -86,7 +95,11 @@ export class NextActionsDAL implements INextActionDataAccessor {
         this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.link+1, action.link);
         this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.snoozeUntil+1, action.snoozeUntil);
         this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.displayOrder+1, action.displayOrder);
-        this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.resolutionDate, action.resolutionDate);
+        this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.resolutionDate+1, action.resolutionDate);
+        this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.createdDate+1, action.createdDate);
+        this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.urgency+1, action.urgency);
+        this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.importance+1, action.importance);
+
     }
 
     public AddRow(name:string, description:string, priority:number, childOf:string, theme:string, points:number) {
@@ -102,6 +115,9 @@ export class NextActionsDAL implements INextActionDataAccessor {
         const link = "";
         const snoozeUntil = null;
         const resolutionDate = null;
+        const createdDate = DateAccessor.Today();
+        const urgency = 3; // arbitrary right now - should make this set by caller
+        const importance = 3; // arbitrary right now - should make this set by caller
 
 
         let newRow:NextAction = new NextAction(
@@ -122,7 +138,10 @@ export class NextActionsDAL implements INextActionDataAccessor {
             link,
             displayOrder,
             snoozeUntil,
-            resolutionDate
+            resolutionDate,
+            createdDate,
+            urgency,
+            importance
         );
 
         this.Update(newRow);
