@@ -1,4 +1,6 @@
-module RecurringActionDAL {
+import { RecurringAction } from "../Models/Sheets/RecurringAction";
+
+export module RecurringActionDAL {
     
     let columnIndices_ZeroIndexed = {
         id: 0,

@@ -1,4 +1,4 @@
-class RecurringAction {
+export class RecurringAction {
     id: string;
     targetTheme: string;
     frequencyInDays: number; 

@@ -21,7 +21,9 @@ export module NextActionColumnIndicesZeroIndex {
             resolutionDate: 16,
             createdDate: 17,
             urgency: 18,
-            importance: 19
+            importance: 19,
+            blockedBy: 20,
+            blocks: 21
         };
     }
 }

@@ -24,6 +24,8 @@ export class NextAction {
     createdDate: Date;
     urgency: number; 
     importance: number;
+    blockedBy: string; 
+    blocks;
 
     constructor(id: string,
         name: string,
@@ -45,7 +47,9 @@ export class NextAction {
         resolutionDate: Date,
         createdDate: Date,
         urgency: number,
-        importance: number
+        importance: number,
+        blockedBy: string,
+        blocks: string
     ) {
         this.id = id; 
         this.name = name;
@@ -64,15 +68,17 @@ export class NextAction {
         this.link = link;
         this.displayOrder = displayOrder;
         this.snoozeUntil = snoozeUntil;
-        this.orderingWeightingScore = PrioritizationWeighting(snoozeUntil, lastUpdated, displayOrder, priority, targetDate, urgency, importance);
+        this.orderingWeightingScore = PrioritizationWeighting(snoozeUntil, lastUpdated, displayOrder, priority, targetDate, urgency, importance, blockedBy);
         this.resolutionDate = resolutionDate;
         this.createdDate = createdDate;
         this.urgency = urgency;
         this.importance = importance;
+        this.blockedBy = blockedBy;
+        this.blocks = blocks
     }
 }
 
-function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrder:number, priority:number, targetDate:Date, urgency:number, importance:number) : number
+function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrder:number, priority:number, targetDate:Date, urgency:number, importance:number, blockedBy:string) : number
 {
   let daysSinceUpdated:number = 0;
   if (DateHelper.IsDateValid(snoozeUntil) && snoozeUntil > DateAccessor.Today())
@@ -96,6 +102,8 @@ function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrde
 
   let sanitizedImportance = importance === undefined || importance === null || importance < 1 ? 1 : importance;
 
-  return daysSinceUpdated + displayOrder + priority + daysUntilDoneSnoozing*1000 - daysPastTargetDate - sanitizedUrgency*10 - sanitizedImportance*5;
+  let isBlockedBump:number = blockedBy !== "" && blockedBy !== undefined ? 1000 : 0;
+
+  return daysSinceUpdated + displayOrder + priority + daysUntilDoneSnoozing*1000 - daysPastTargetDate - sanitizedUrgency*10 - sanitizedImportance*5 + isBlockedBump;
 }
 

@@ -4,7 +4,6 @@ import { NextActionColumnIndicesZeroIndex } from "./NextActionColumnIndicesZeroI
 import { INextActionDataAccessor } from "./INextActionDataAccessor"
 import { DateHelper } from "../Helpers/DateHelper";
 
-
 export class NextActionsDAL implements INextActionDataAccessor {
 
     private nextActionTableName:string = 'Next Actions';
@@ -40,6 +39,8 @@ export class NextActionsDAL implements INextActionDataAccessor {
                 let createdDate:Date = row[colIndices.createdDate];
                 let urgency: number = row[colIndices.urgency]; 
                 let importance: number = row[colIndices.importance];
+                let blockedBy:string = row[colIndices.blockedBy];
+                let blocks:string = row[colIndices.blocks];
 
                 return new NextAction(
                     id,
@@ -62,7 +63,9 @@ export class NextActionsDAL implements INextActionDataAccessor {
                     resolutionDate,
                     createdDate,
                     urgency,
-                    importance
+                    importance,
+                    blockedBy,
+                    blocks
                 )
             }
         );
@@ -99,7 +102,8 @@ export class NextActionsDAL implements INextActionDataAccessor {
         this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.createdDate+1, action.createdDate);
         this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.urgency+1, action.urgency);
         this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.importance+1, action.importance);
-
+        this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.blockedBy+1, action.blockedBy);
+        this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.blocks+1, action.blocks);
     }
 
     public AddRow(name:string, description:string, priority:number, childOf:string, theme:string, points:number) {
@@ -118,6 +122,8 @@ export class NextActionsDAL implements INextActionDataAccessor {
         const createdDate = DateAccessor.Today();
         const urgency = 3; // arbitrary right now - should make this set by caller
         const importance = 3; // arbitrary right now - should make this set by caller
+        const blockedBy = "";
+        const blocks = "";
 
 
         let newRow:NextAction = new NextAction(
@@ -141,7 +147,9 @@ export class NextActionsDAL implements INextActionDataAccessor {
             resolutionDate,
             createdDate,
             urgency,
-            importance
+            importance,
+            blockedBy,
+            blocks
         );
 
         this.Update(newRow);

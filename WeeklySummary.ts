@@ -17,7 +17,8 @@ export module Graphs {
      */
 
     export function GetChartWeeks(): TotalPointsForAWeek[] {
-        let allNextActions:NextAction[] = NextActionsDAL.GetRows();
+        let nextActionsAccessor = new NextActionsDAL();
+        let allNextActions:NextAction[] = nextActionsAccessor.GetRows();
 
         allNextActions = allNextActions.filter(row => row.isDone === true);
 
@@ -73,7 +74,7 @@ export module Graphs {
         return chartUrl;
     }
 
-    function sendInlineImages() {
+   /* function sendInlineImages() {
         var mailaddress = myEmail;
         var subject = "test inline images";
         var bodyNL = "This is <B>DUTCH</B> text.";
@@ -111,7 +112,7 @@ export module Graphs {
                     superduper: imageTest,
                 }
             });
-    }
+    }*/
 }
 
 require ('./WeeklySummary.ts')
