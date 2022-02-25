@@ -16,9 +16,9 @@ export module Graphs {
      * From: http://stackoverflow.com/a/37688529/1677912
      */
 
-    export function GetChartWeeks(): TotalPointsForAWeek[] {
+    export async function GetChartWeeks(): Promise<TotalPointsForAWeek[]> {
         let nextActionsAccessor = new NextActionsDAL();
-        let allNextActions:NextAction[] = nextActionsAccessor.GetRows();
+        let allNextActions:NextAction[] = await nextActionsAccessor.GetRows();
 
         allNextActions = allNextActions.filter(row => row.isDone === true);
 

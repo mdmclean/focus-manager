@@ -10,7 +10,7 @@ export class NextActionsDAL implements INextActionDataAccessor {
 
     private columnIndices_ZeroIndexed = NextActionColumnIndicesZeroIndex.GetIndices();
     
-    public GetRows() : NextAction[] {
+    public async GetRows() : Promise<NextAction[]> {
         var naRange =  SpreadsheetApp.getActive().getSheetByName(this.nextActionTableName).getDataRange().getValues();
 
        naRange.shift(); // remove header row

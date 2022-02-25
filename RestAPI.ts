@@ -3,11 +3,13 @@ import { NextActionsDAL } from "./DAL/NextActionsDAL";
 
 
 function AddNextActionRow(name:string, description:string, priority:number, childOf:string, theme:string, points:number) {
-    NextActionsDAL.AddRow(name,description,priority,childOf,theme,points);
+    let actionAccessor = new NextActionsDAL();
+    actionAccessor.AddRow(name,description,priority,childOf,theme,points);
 }
 
-function GetAllNextActions() {
-    let rows = NextActionsDAL.GetRows();
+async function GetAllNextActions() {
+    let actionAccessor = new NextActionsDAL();
+    let rows = await actionAccessor.GetRows();
 
     let rowsAsArrays = [];
 

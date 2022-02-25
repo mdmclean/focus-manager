@@ -8,14 +8,14 @@ import { RecurringActionDAL } from "./DAL/RecurringEventDAL";
 
 
 export module Updater {
-  export function DailyUpdater() {
+  export async function DailyUpdater() {
 
     let nextActionsAccessor: INextActionDataAccessor = new NextActionsDAL();
 
     AddRecurringActions(nextActionsAccessor);
 
 
-    var nextActions = nextActionsAccessor.GetRows();
+    var nextActions = await nextActionsAccessor.GetRows();
 
     nextActions = CheckBlockingRelationships(nextActions);
     nextActions = AddBlockedByFromBlocks(nextActions);

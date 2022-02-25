@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "googleapis": "^39.2.0",
+    "googleapis": "^95.0.0",
     "moment": "^2.29.1",
     "quickchart-js": "^2.0.3"
   },
