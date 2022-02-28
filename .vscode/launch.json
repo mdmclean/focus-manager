@@ -55,7 +55,7 @@
                 "--require", "ts-node/register",
                 "-u", "tdd",
                 "--colors", "--no-timeouts",
-                "test\\test-sheetsapi.ts",
+                "test\\integrationtests-sheetsapi.ts",
             ], 
             "cwd": "${workspaceRoot}",
             "console": "integratedTerminal",

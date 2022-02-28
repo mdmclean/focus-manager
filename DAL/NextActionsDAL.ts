@@ -106,53 +106,14 @@ export class NextActionsDAL implements INextActionDataAccessor {
         this.UpdateNextActionCell(action.rowZeroIndexed+1, this.columnIndices_ZeroIndexed.blocks+1, action.blocks);
     }
 
-    public AddRow(name:string, description:string, priority:number, childOf:string, theme:string, points:number) {
+    public AddRow(action:NextAction) {
         let rowZeroIndexed:number = this.GetNumberOfRows()+1; 
         let id:string = "NA-" + rowZeroIndexed;
 
-        const effortCount = 0; 
-        const targetDate = null; 
-        const display = true;
-        const isDone = false;
-        const lastUpdated = DateAccessor.Today();
-        const displayOrder = 1;
-        const link = "";
-        const snoozeUntil = null;
-        const resolutionDate = null;
-        const createdDate = DateAccessor.Today();
-        const urgency = 3; // arbitrary right now - should make this set by caller
-        const importance = 3; // arbitrary right now - should make this set by caller
-        const blockedBy = "";
-        const blocks = "";
+        action.id = id;
+        action.rowZeroIndexed = rowZeroIndexed;
 
-
-        let newRow:NextAction = new NextAction(
-            id,
-            name,
-            description,
-            priority,
-            childOf,
-            isDone,
-            lastUpdated,
-            theme,
-            points,
-            effortCount,
-            targetDate,
-            display,
-            priority,
-            rowZeroIndexed,
-            link,
-            displayOrder,
-            snoozeUntil,
-            resolutionDate,
-            createdDate,
-            urgency,
-            importance,
-            blockedBy,
-            blocks
-        );
-
-        this.Update(newRow);
+        this.Update(action);
     }
 
     private UpdateNextActionCell(row:number, column:number, value:any) 

@@ -6,6 +6,8 @@ const sheets = google.sheets('v4');
 import privateKey = require('../focus-manager-eeb4fa264f6f.json');
 import { NextActionColumnIndicesZeroIndex } from "../DAL/NextActionColumnIndicesZeroIndexed";
 import { auth, JWT } from "google-auth-library";
+import { v4 as uuidv4 } from 'uuid';
+import moment = require("moment");
 
 // https://googleapis.dev/nodejs/googleapis/latest/sheets/classes/Sheets.html
 //https://codelabs.developers.google.com/codelabs/sheets-api#8
@@ -13,7 +15,7 @@ import { auth, JWT } from "google-auth-library";
 
 export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
 
-  private spreadsheetId = '1GMzzwvc4p3MwOfcF95_KmJSZQUMRfx4sZwJykxU0r04';
+  private spreadsheetId = '1GMzzwvc4p3MwOfcF95_KmJSZQUMRfx4sZwJykxU0r04'; // TODO pull into configuration
   private sheetName = 'Next Actions'
 
   constructor() {
@@ -121,7 +123,7 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
     let request = {
       spreadsheetId: this.spreadsheetId,
       range: `${this.sheetName}!A${action.rowZeroIndexed+1}:Z${action.rowZeroIndexed+1}`,
-      valueInputOption: 'RAW', 
+      valueInputOption: 'USER_ENTERED', 
       resource: resource
     }
 
@@ -133,13 +135,33 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
       console.error(e);
     }
   }
-  AddRow(name: string, description: string, priority: number, childOf: string, theme: string, points: number) {
-    throw new Error("Method not implemented.");
+
+  async AddRow(action:NextAction, targetTable:string=this.sheetName) {
+    action.id = "NA-" + uuidv4(); 
+    let nextActionRow = this.buildRowForNextActions(action);
+
+    let valuesForInput = [];
+    valuesForInput.push(nextActionRow);
+
+    const resource = {
+      values: valuesForInput,
+    };
+
+    let request = {
+      spreadsheetId: this.spreadsheetId,
+      range: targetTable,
+      valueInputOption: 'USER_ENTERED', 
+      resource: resource
+    }
+
+    try {
+      let result = await sheets.spreadsheets.values.append(request);
+      console.log(result);
+    }
+    catch (e) {
+      console.error(e);
+    }
   }
-
-  private nextActionTableName: string = 'Next Actions';
-
-  private columnIndices_ZeroIndexed = NextActionColumnIndicesZeroIndex.GetIndices();
 
   private buildRowForNextActions(nextAction: NextAction) {
     let nextActionRow = [];
@@ -150,24 +172,29 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
     nextActionRow.push(nextAction.priority);
     nextActionRow.push(nextAction.childOf);
     nextActionRow.push(nextAction.isDone);
-    nextActionRow.push(nextAction.lastUpdated);
+    nextActionRow.push(this.createGoogleSheetsStyleDateString(nextAction.lastUpdated));
     nextActionRow.push(nextAction.theme);
     nextActionRow.push(nextAction.points);
     nextActionRow.push(nextAction.effortCount);
-    nextActionRow.push(nextAction.targetDate);
+    nextActionRow.push(this.createGoogleSheetsStyleDateString(nextAction.targetDate));
     nextActionRow.push(nextAction.isDiplayed);
     nextActionRow.push(nextAction.originalPriority);
     nextActionRow.push(nextAction.link);
     nextActionRow.push(nextAction.displayOrder);
-    nextActionRow.push(nextAction.snoozeUntil);
-    nextActionRow.push(nextAction.resolutionDate);
-    nextActionRow.push(nextAction.createdDate);
+    nextActionRow.push(this.createGoogleSheetsStyleDateString(nextAction.snoozeUntil));
+    nextActionRow.push(this.createGoogleSheetsStyleDateString(nextAction.resolutionDate));
+    nextActionRow.push(this.createGoogleSheetsStyleDateString(nextAction.createdDate));
     nextActionRow.push(nextAction.urgency);
     nextActionRow.push(nextAction.importance);
     nextActionRow.push(nextAction.blockedBy);
     nextActionRow.push(nextAction.blocks);
 
     return nextActionRow;
+  }
+
+  private createGoogleSheetsStyleDateString(dateToConvert:Date) : string 
+  {
+    return (dateToConvert !== null ? moment(dateToConvert).format('M/D/YYYY HH:mm:ss') : "");
   }
 
 }

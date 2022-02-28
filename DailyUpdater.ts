@@ -5,17 +5,14 @@ import { DateAccessor } from "./DAL/DateAccessor";
 import { INextActionDataAccessor } from "./DAL/INextActionDataAccessor";
 import { RecurringAction } from "./Models/Sheets/RecurringAction";
 import { RecurringActionDAL } from "./DAL/RecurringEventDAL";
+import { NextActionHelper } from "./Helpers/NextActionHelper";
 
 
 export module Updater {
-  export async function DailyUpdater() {
-
-    let nextActionsAccessor: INextActionDataAccessor = new NextActionsDAL();
-
-    AddRecurringActions(nextActionsAccessor);
-
+  export async function DailyUpdater(nextActionsAccessor:INextActionDataAccessor) {
 
     var nextActions = await nextActionsAccessor.GetRows();
+
 
     nextActions = CheckBlockingRelationships(nextActions);
     nextActions = AddBlockedByFromBlocks(nextActions);
@@ -23,7 +20,11 @@ export module Updater {
     nextActions = UpdateDisplayOrder(nextActions, "Home");
     nextActions = UpdateDisplayOrder(nextActions, "Work");
 
-    CommitChanges(nextActionsAccessor, nextActions);
+    await CommitChanges(nextActionsAccessor, nextActions);
+
+
+    // only works in App Scripts right now...
+    AddRecurringActions(nextActionsAccessor);
   }
 
   function UpdateDisplayOrder(nextActions: NextAction[], targetTheme: string): NextAction[] {
@@ -44,7 +45,9 @@ export module Updater {
 
     recurringActions.forEach((row) => {
       if (row.nextOccurrence < DateAccessor.Today()) {
-        naAccessor.AddRow(row.name, row.description, row.priority, row.childOf, row.targetTheme, row.points);
+
+        let newAction: NextAction = NextActionHelper.CreateActionWithDefaults(row.name, row.description, row.priority, row.childOf, row.targetTheme, row.points);
+        naAccessor.AddRow(newAction);
         row.nextOccurrence = DateAccessor.GetDateXDaysFromNow(row.frequencyInDays);
         RecurringActionDAL.Update(row);
       }
@@ -85,13 +88,10 @@ export module Updater {
     return nextActions;
   }
 
-
-  function CommitChanges(nextActionsAccessor: INextActionDataAccessor, nextActions: NextAction[]) {
+  async function CommitChanges(nextActionsAccessor: INextActionDataAccessor, nextActions: NextAction[]) {
     for (var i = 0; i < nextActions.length; i++) {
-      nextActionsAccessor.Update(nextActions[i]);
+      await nextActionsAccessor.Update(nextActions[i]);
     }
 
   }
-
 }
-

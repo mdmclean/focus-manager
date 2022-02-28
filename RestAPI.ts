@@ -1,10 +1,13 @@
 
 import { NextActionsDAL } from "./DAL/NextActionsDAL";
+import { NextActionHelper } from "./Helpers/NextActionHelper";
+import { NextAction } from "./Models/Sheets/NextAction";
 
 
 function AddNextActionRow(name:string, description:string, priority:number, childOf:string, theme:string, points:number) {
     let actionAccessor = new NextActionsDAL();
-    actionAccessor.AddRow(name,description,priority,childOf,theme,points);
+    let newAction:NextAction = NextActionHelper.CreateActionWithDefaults(name,description,priority,childOf,theme,points);
+    actionAccessor.AddRow(newAction);
 }
 
 async function GetAllNextActions() {
