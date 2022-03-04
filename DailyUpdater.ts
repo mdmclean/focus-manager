@@ -1,11 +1,7 @@
 
 import { NextAction } from "./Models/Sheets/NextAction";
-import { NextActionsDAL } from "./DAL/NextActionsDAL";
 import { DateAccessor } from "./DAL/DateAccessor";
 import { INextActionDataAccessor } from "./DAL/INextActionDataAccessor";
-import { RecurringAction } from "./Models/Sheets/RecurringAction";
-import { RecurringActionDAL } from "./DAL/RecurringEventDAL";
-import { NextActionHelper } from "./Helpers/NextActionHelper";
 
 
 export module Updater {
@@ -21,10 +17,6 @@ export module Updater {
     nextActions = UpdateDisplayOrder(nextActions, "Work");
 
     await CommitChanges(nextActionsAccessor, nextActions);
-
-
-    // only works in App Scripts right now...
-    AddRecurringActions(nextActionsAccessor);
   }
 
   function UpdateDisplayOrder(nextActions: NextAction[], targetTheme: string): NextAction[] {
@@ -39,21 +31,6 @@ export module Updater {
     return nextActions
   }
 
-
-  function AddRecurringActions(naAccessor: INextActionDataAccessor) {
-    let recurringActions: RecurringAction[] = RecurringActionDAL.GetRows();
-
-    recurringActions.forEach((row) => {
-      if (row.nextOccurrence < DateAccessor.Today()) {
-
-        let newAction: NextAction = NextActionHelper.CreateActionWithDefaults(row.name, row.description, row.priority, row.childOf, row.targetTheme, row.points);
-        naAccessor.AddRow(newAction);
-        row.nextOccurrence = DateAccessor.GetDateXDaysFromNow(row.frequencyInDays);
-        RecurringActionDAL.Update(row);
-      }
-    }
-    )
-  }
 
   export function CheckBlockingRelationships(nextActions: NextAction[]): NextAction[] {
     nextActions.forEach((row) => {
