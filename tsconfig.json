@@ -3,5 +3,12 @@
       "target": "es6",
       "module": "commonjs",
       "resolveJsonModule": true
-    }
+    },
+    "exclude": [
+      "test/**",
+      "AppScriptRunner.ts",
+      "RestAPI.ts",
+      "app.ts",
+      "ImportAutocomplete.ts"
+    ]
   }

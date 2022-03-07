@@ -4,3 +4,4 @@ credentials.json
 node_modules
 focus-manager-eeb4fa264f6f.json
 test/integrationtests-sheetsapi.ts
+**/*.js
