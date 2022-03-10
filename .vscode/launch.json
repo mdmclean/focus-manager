@@ -9,6 +9,7 @@
             "request": "launch",
             "name": "Mocha All",
             "program": "${workspaceFolder}\\node_modules\\mocha\\bin\\_mocha",
+            "preLaunchTask": "tsc: build - tsconfig.json",
             "args": [
                 "--require", "ts-node/register",
                 "-u", "tdd",
@@ -38,6 +39,7 @@
             "request": "launch",
             "name": "Mocha Current File",
             "program": "${workspaceFolder}\\node_modules\\mocha\\bin\\_mocha",
+            "preLaunchTask": "tsc: build - tsconfig.json",
             "args": [
                 "--require", "ts-node/register",
                 "-u", "tdd",
@@ -53,6 +55,7 @@
             "request": "launch",
             "name": "Mocha Current Focus",
             "program": "${workspaceFolder}\\node_modules\\mocha\\bin\\_mocha",
+            "preLaunchTask": "tsc: build - tsconfig.json",
             "args": [
                 "--require", "ts-node/register",
                 "-u", "tdd",

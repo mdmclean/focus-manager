@@ -20,9 +20,7 @@ RecurringActionsUpdater.ts
 RestAPI.ts
 WeeklySummary.ts
 test/**
-
-
-
+**/*.js.map
 
 # Node.js dependencies:
 node_modules/

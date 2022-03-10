@@ -2,13 +2,13 @@
 import { NextAction } from "./Models/Sheets/NextAction";
 import { DateAccessor } from "./DAL/DateAccessor";
 import { INextActionDataAccessor } from "./DAL/INextActionDataAccessor";
+import { DateHelper } from "./Helpers/DateHelper";
 
 
 export module Updater {
-  export async function DailyUpdater(nextActionsAccessor:INextActionDataAccessor) {
+  export async function DailyUpdater(nextActionsAccessor: INextActionDataAccessor) {
 
     var nextActions = await nextActionsAccessor.GetRows();
-
 
     nextActions = CheckBlockingRelationships(nextActions);
     nextActions = AddBlockedByFromBlocks(nextActions);
@@ -25,7 +25,9 @@ export module Updater {
     actionsToOrder = actionsToOrder.sort((x, y) => x.orderingWeightingScore - y.orderingWeightingScore);
 
     for (var i = 0; i < actionsToOrder.length; i++) {
-      nextActions.find((row) => row.id === actionsToOrder[i].id).displayOrder = i + 1; // 1 index display order   
+      let actionToUpdate = nextActions.find((row) => row.id === actionsToOrder[i].id)
+      actionToUpdate.displayOrder = i + 1; // 1 index display order   
+      actionToUpdate.updated = true;
     }
 
     return nextActions
@@ -34,16 +36,18 @@ export module Updater {
 
   export function CheckBlockingRelationships(nextActions: NextAction[]): NextAction[] {
     nextActions.forEach((row) => {
-      if (row.blockedBy !== "") {
+      if (row.blockedBy !== "" && row.blockedBy !== undefined) {
         let blockingAction = nextActions.find(na => na.id === row.blockedBy);
 
         if (blockingAction !== undefined) {
           if (blockingAction.isDone === true) {
             row.blockedBy = "";
+            row.updated = true;
           }
         }
         else {
           row.blockedBy = "";
+          row.updated = true;
         }
       }
     })
@@ -53,11 +57,12 @@ export module Updater {
 
   export function AddBlockedByFromBlocks(nextActions: NextAction[]): NextAction[] {
     nextActions.forEach((row) => {
-      if (row.isDone === false && row.blocks !== "") {
+      if (row.isDone === false && row.blocks !== "" && row.blocks !== undefined) {
         let actionThisBlocks = nextActions.find(na => na.id === row.blocks);
 
         if (actionThisBlocks !== undefined) {
           actionThisBlocks.blockedBy = row.id;
+          actionThisBlocks.updated = true;
         }
       }
     })
@@ -66,9 +71,6 @@ export module Updater {
   }
 
   async function CommitChanges(nextActionsAccessor: INextActionDataAccessor, nextActions: NextAction[]) {
-    for (var i = 0; i < nextActions.length; i++) {
-      await nextActionsAccessor.Update(nextActions[i]);
-    }
-
+    await nextActionsAccessor.UpdateRows(nextActions.filter(action => action.updated === true));
   }
 }

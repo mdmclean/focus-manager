@@ -17,4 +17,9 @@ export module DateHelper {
     {
         return moment().subtract(7, 'd').toDate();
     }
+
+    export function CurrentTime() : Date
+    {
+        return moment().toDate();
+    }
 }

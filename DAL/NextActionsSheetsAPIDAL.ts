@@ -8,6 +8,7 @@ import { NextActionColumnIndicesZeroIndex } from "../DAL/NextActionColumnIndices
 import { auth, JWT } from "google-auth-library";
 import { v4 as uuidv4 } from 'uuid';
 import moment = require("moment");
+import { DateHelper } from "../Helpers/DateHelper";
 
 // https://googleapis.dev/nodejs/googleapis/latest/sheets/classes/Sheets.html
 //https://codelabs.developers.google.com/codelabs/sheets-api#8
@@ -61,13 +62,13 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
         let description: string = row[colIndices.description];
         let priority: number = parseInt(row[colIndices.priority]);
         let childOf: string = row[colIndices.childOf];
-        let isDone: boolean = row[colIndices.isDone];
+        let isDone: boolean = row[colIndices.isDone] === 'TRUE' ? true : false;
         let lastUpdated: Date = row[colIndices.lastUpdated] !== '' ? new Date(row[colIndices.lastUpdated]) : null;
         let theme: string = row[colIndices.theme];
         let points: number = parseInt(row[colIndices.points]);
         let effortCount: number = parseInt(row[colIndices.effortCount]);
         let targetDate: Date = row[colIndices.targetDate] !== '' ? new Date(row[colIndices.targetDate]) : null;
-        let isDisplayed: boolean = row[colIndices.isDisplayed];
+        let isDisplayed: boolean = row[colIndices.isDisplayed] === 'TRUE' ? true : false;
         let originalPriority: number = parseInt(row[colIndices.originalPriority]);
         let link: string = row[colIndices.link];
         let displayOrder: number = parseInt(row[colIndices.displayOrder]);
@@ -128,8 +129,7 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
     }
 
     try {
-      let result = await sheets.spreadsheets.values.update(request);
-      console.log(result);
+      await sheets.spreadsheets.values.update(request);
     }
     catch (e) {
       console.error(e);
@@ -156,7 +156,6 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
 
     try {
       let result = await sheets.spreadsheets.values.append(request);
-      console.log(result);
     }
     catch (e) {
       console.error(e);
@@ -171,13 +170,13 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
     nextActionRow.push(nextAction.description);
     nextActionRow.push(nextAction.priority);
     nextActionRow.push(nextAction.childOf);
-    nextActionRow.push(nextAction.isDone);
+    nextActionRow.push(nextAction.isDone === true ? 'TRUE' : 'FALSE');
     nextActionRow.push(this.createGoogleSheetsStyleDateString(nextAction.lastUpdated));
     nextActionRow.push(nextAction.theme);
     nextActionRow.push(nextAction.points);
     nextActionRow.push(nextAction.effortCount);
     nextActionRow.push(this.createGoogleSheetsStyleDateString(nextAction.targetDate));
-    nextActionRow.push(nextAction.isDiplayed);
+    nextActionRow.push(nextAction.isDiplayed ? 'TRUE' : 'FALSE');
     nextActionRow.push(nextAction.originalPriority);
     nextActionRow.push(nextAction.link);
     nextActionRow.push(nextAction.displayOrder);
@@ -190,6 +189,33 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
     nextActionRow.push(nextAction.blocks);
 
     return nextActionRow;
+  }
+
+  async UpdateRows(actions: NextAction[]) {
+    let callCounter:number = 0;
+    
+    let startTime:Date = DateHelper.CurrentTime();
+
+    for (var i = 0; i < actions.length; i++) {
+        await this.Update(actions[i]);  
+        callCounter += 1;
+
+          // 60 calls per minute rate limit 
+        if (callCounter === 50) { // TODO - better back off strategy AND/OR use the batch update Google Sheets API 
+          let endTime:Date = DateHelper.CurrentTime();
+          let executionDuration:number = (endTime.getTime() - startTime.getTime())/1000;
+          let sleepTime:number = Math.min(60 - executionDuration, 0);
+
+          console.log('start sleep ' + sleepTime);
+          await this.delay(1000 * sleepTime); // sleep for the rest of the minute
+          callCounter = 0;
+          startTime = DateHelper.CurrentTime();
+        }
+    }
+  }
+
+  private async delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private createGoogleSheetsStyleDateString(dateToConvert:Date) : string 

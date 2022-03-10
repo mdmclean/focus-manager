@@ -25,7 +25,8 @@ export class NextAction {
     urgency: number; 
     importance: number;
     blockedBy: string; 
-    blocks;
+    blocks: string;
+    updated: boolean;
 
     constructor(id: string,
         name: string,
@@ -74,7 +75,8 @@ export class NextAction {
         this.urgency = urgency;
         this.importance = importance;
         this.blockedBy = blockedBy;
-        this.blocks = blocks
+        this.blocks = blocks;
+        this.updated = false;
     }
 }
 

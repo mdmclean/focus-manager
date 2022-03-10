@@ -5,6 +5,10 @@ import { INextActionDataAccessor } from "./INextActionDataAccessor"
 import { DateHelper } from "../Helpers/DateHelper";
 
 export class NextActionsDAL implements INextActionDataAccessor {
+    
+    UpdateRows(actions: NextAction[]) {
+        throw new Error("Method not implemented.");
+    }
 
     private nextActionTableName:string = 'Next Actions';
 
