@@ -13,7 +13,7 @@ export module RecurringActionUpdater {
     recurringActions.forEach((row) => {
       if (row.nextOccurrence < DateAccessor.Today()) {
 
-        let newAction: NextAction = NextActionHelper.CreateActionWithDefaults(row.name, row.description, row.priority, row.childOf, row.targetTheme, row.points);
+        let newAction: NextAction = NextActionHelper.CreateActionWithDefaults(row.name, row.description, row.priority, row.childOf, row.targetTheme, row.points, 5, 3);
         naAccessor.AddRow(newAction);
         row.nextOccurrence = DateAccessor.GetDateXDaysFromNow(row.frequencyInDays);
         RecurringActionDAL.Update(row);

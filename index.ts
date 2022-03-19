@@ -11,7 +11,7 @@ export async function CloudFunctionTest (req, res) {
         case 'POST':
             let actionAccessor = new NextActionsSheetsAPIDAL();
             let newAction:NextAction = NextActionHelper.CreateActionWithDefaults(req.body.name,
-                req.body.description,req.body.priority,req.body.childOf,req.body.theme,req.body.points);
+                req.body.description,req.body.priority,req.body.childOf,req.body.theme,req.body.points,req.body.urgency,req.body.importance);
             await actionAccessor.AddRow(newAction);
         default:
             break;
