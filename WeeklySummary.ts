@@ -1,24 +1,83 @@
 //https://stackoverflow.com/questions/36178369/how-to-include-inline-images-in-email-using-mailapp
 // https://stackoverflow.com/questions/9347514/sending-google-visualization-chart-to-email
 
-const QuickChart = require("quickchart-js");
 import moment = require("moment");
 import { NextAction } from "./Models/Sheets/NextAction";
 import { NextActionsDAL } from "./DAL/NextActionsDAL"
 import { TotalPointsForAWeek } from "./Models/Visualizations/TotalPointsForAWeek";
+import { INextActionDataAccessor } from "./DAL/INextActionDataAccessor";
+import { DateHelper } from "./Helpers/DateHelper"
+const QuickChart = require("quickchart-js");
 
-export module Graphs {
+export module WeeklySummary {
 
     var myEmail = "myextraemail030@gmail.com";
 
-    /**
-     * Example of sending an HTML email message with inline images.
-     * From: http://stackoverflow.com/a/37688529/1677912
-     */
+    class ActionSummaryViewModel {
+        name: string;
+        createdDate: string;
+        theme: string;
+        isDone:string;
+        points:string;
+
+        constructor(action: NextAction) {
+            this.name = action.name;
+            this.createdDate = action.createdDate.toDateString();
+            this.theme = action.theme;
+            this.isDone = action.isDone ? "Done" : "Not Done";
+            this.points = action.points.toString();
+        }
+    }
+
+    function HtmlTableWriter(someArrayOfObjects, columnsToInclude:string[]) {
+       
+        var html = '<table border=\'1\' style=\'border-collapse:collapse\'><tr>' +
+        columnsToInclude.map(function (c) { return '<th>' + c + '</th>' }).join('') +
+            '</tr>';
+        for (var l in someArrayOfObjects) {
+            html += '<tr>' +
+            columnsToInclude.map(function (c) { return '<td>' + (someArrayOfObjects[l][c] || '') + '</td>' }).join('') +
+                '</tr>';
+        }
+        html += '</table>';
+
+        return html;
+    }
+
+    export async function RunWeeklySummary(nextActionsAccessor: INextActionDataAccessor) {
+        let nextActions = await nextActionsAccessor.GetRows();
+
+        let createdThisWeek = nextActions.filter((action) => action.createdDate > DateHelper.DaysAgo(7) && action.isDone !== true);
+
+        let completedThisWeek = nextActions.filter((action) => action.resolutionDate > DateHelper.DaysAgo(7) && action.isDone === true);
+
+
+        let createdThisWeekViewModel = [];
+        let completedThisWeekViewModel = [];
+
+        createdThisWeek.forEach((action) =>
+            createdThisWeekViewModel.push(new ActionSummaryViewModel(action))
+        );
+
+        completedThisWeek.forEach((action) =>
+            completedThisWeekViewModel.push(new ActionSummaryViewModel(action))
+        );
+
+        let pointsByWeek = GetTotalPointsByWeek(nextActions);
+        let velocityChartUrl = GetWeeklyVelocityChart(pointsByWeek);
+
+        let velocityChartHtml = "<img src=\"" + velocityChartUrl + "\" />"
+
+
+        let html = "<html><body>" + HtmlTableWriter(createdThisWeekViewModel, ["name", "createdDate", "theme", "points"]) 
+            + "<br/>" + HtmlTableWriter(completedThisWeekViewModel, ["name","points", "theme", ]) + "<br/>" + velocityChartHtml + "</body></html>";
+
+        return html;
+    }
 
     export async function GetChartWeeks(): Promise<TotalPointsForAWeek[]> {
         let nextActionsAccessor = new NextActionsDAL();
-        let allNextActions:NextAction[] = await nextActionsAccessor.GetRows();
+        let allNextActions: NextAction[] = await nextActionsAccessor.GetRows();
 
         allNextActions = allNextActions.filter(row => row.isDone === true);
 
@@ -27,36 +86,40 @@ export module Graphs {
         return storyPointsByWeek;
     }
 
-    export function GetTotalPointsByWeek(allNextActions: NextAction[]) : TotalPointsForAWeek[] {
+    export function GetTotalPointsByWeek(nextActions: NextAction[]): TotalPointsForAWeek[] {
         let totalPointsByWeek = new Array<TotalPointsForAWeek>();
 
-         allNextActions.forEach((action) => {
+        nextActions = nextActions.filter((action) => action.isDone === true && action.resolutionDate !== undefined && action.resolutionDate !== null)
+
+        nextActions.forEach((action) => {
             const year = moment(action.resolutionDate).year();
             const week = moment(action.resolutionDate).week();
 
-            let weekIndex:number = totalPointsByWeek.findIndex((weeks) => weeks.year === year && weeks.week === week);
+            if (!isNaN(week)) {
 
-            if (weekIndex < 0)
-            {
-                totalPointsByWeek.push(new TotalPointsForAWeek(year, week, action.points));
-            }
-            else {
-                totalPointsByWeek[weekIndex].totalPoints += action.points;
+                let weekIndex: number = totalPointsByWeek.findIndex((weeks) => weeks.year === year && weeks.week === week);
+
+                if (weekIndex < 0) {
+                    totalPointsByWeek.push(new TotalPointsForAWeek(year, week, action.points));
+                }
+                else {
+                    totalPointsByWeek[weekIndex].totalPoints += action.points;
+                }
             }
         });
 
         return totalPointsByWeek;
     }
 
-    export function GetWeeklyVelocityChart(pointsByWeek:TotalPointsForAWeek[]) {
+    export function GetWeeklyVelocityChart(pointsByWeek: TotalPointsForAWeek[]) {
 
-        pointsByWeek = pointsByWeek.sort((x, y) => (x.year+x.week) - (y.year+y.week));
+        pointsByWeek = pointsByWeek.sort((x, y) => (x.year + x.week) - (y.year + y.week));
 
-        let weeklyLabels:string[] = [];
-        let weeklyTotals:number[] = [];
+        let weeklyLabels: string[] = [];
+        let weeklyTotals: number[] = [];
 
         pointsByWeek.forEach((week) => {
-            weeklyLabels.push(`${week.year}-${week.week}`);
+            weeklyLabels.push(`Week ${week.week}`);
             weeklyTotals.push(week.totalPoints);
         });
 
@@ -73,46 +136,4 @@ export module Graphs {
 
         return chartUrl;
     }
-
-   /* function sendInlineImages() {
-        var mailaddress = myEmail;
-        var subject = "test inline images";
-        var bodyNL = "This is <B>DUTCH</B> text.";
-
-        // var options = {
-        //     'method': 'post',
-        //     'contentType': 'application/json',
-        //     'payload': JSON.stringify(
-        //         {
-        //             'chart': {
-        //                 'type': 'bar', 'data': {
-        //                     'labels': ['Hello', 'World'],
-        //                     'datasets': [{ 'label': 'Foo', 'data': [1, 2] }]
-        //                 }
-        //             }
-        //         }
-        //     )
-        // }
-
-        //"https://quickchart.io/chart", options
-
-        let pointsByWeek = GetChartWeeks();
-
-        var imageTest = UrlFetchApp.fetch(GetWeeklyVelocityChart(pointsByWeek)).getBlob().setName("MyChart");
-
-        // Prepend embeded image tags for email
-        bodyNL = "<img src='cid:superduper' style='width:800px; height:400px;'/>" + bodyNL;
-
-        // Send message with inlineImages object, matching embedded tags.
-        MailApp.sendEmail(mailaddress, subject, "",
-            {
-                htmlBody: bodyNL,
-                inlineImages:
-                {
-                    superduper: imageTest,
-                }
-            });
-    }*/
 }
-
-require ('./WeeklySummary.ts')
