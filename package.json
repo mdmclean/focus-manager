@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@google-cloud/functions-framework": "^3.0.0",
+    "@sendgrid/mail": "^7.6.2",
     "express": "^4.17.3",
     "googleapis": "^95.0.0",
     "moment": "^2.29.1",
@@ -16,7 +17,7 @@
   },
   "scripts": {
     "test": "mocha -r ts-node/register test/**/*.spec.ts",
-    "start": "tsc & node app.js",
+    "start": "tsc & node index.js",
     "deploy": "tsc & gcloud functions deploy CloudFunctionTest --runtime nodejs16 --trigger-http --allow-unauthenticated"
   }
 }

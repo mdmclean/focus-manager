@@ -3,6 +3,9 @@ token.json
 credentials.json
 node_modules
 focus-manager-eeb4fa264f6f.json
+focus-manager-437b43c27d47.json
 test/integrationtests-sheetsapi.ts
 **/*.js
 **/*.js.map
+sendgrid_cred.json
+test/weeklySummary.html

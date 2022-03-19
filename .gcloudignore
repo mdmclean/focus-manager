@@ -18,7 +18,6 @@ DAL/RecurringEventDAL.ts
 AppScriptRunner.ts
 RecurringActionsUpdater.ts
 RestAPI.ts
-WeeklySummary.ts
 test/**
 **/*.js.map
 
