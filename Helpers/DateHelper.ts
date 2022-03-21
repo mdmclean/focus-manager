@@ -15,11 +15,18 @@ export module DateHelper {
 
     export function DaysAgo(daysAgo:number) : Date
     {
-        return moment().subtract(7, 'd').toDate();
+        return moment().subtract(daysAgo, 'd').toDate();
     }
 
     export function CurrentTime() : Date
     {
         return moment().toDate();
+    }
+
+    export function IsValidDate(testDate:Date) : Boolean
+    {
+        return testDate 
+            && Object.prototype.toString.call(testDate) === "[object Date]" 
+            && !isNaN(testDate.getTime());
     }
 }
