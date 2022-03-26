@@ -13,16 +13,6 @@ export module DateHelper {
         return dateToTest !== null && dateToTest !== undefined && dateToTest instanceof Date && !isNaN(dateToTest.getTime());
     }
 
-    export function DaysAgo(daysAgo:number) : Date
-    {
-        return moment().subtract(daysAgo, 'd').toDate();
-    }
-
-    export function CurrentTime() : Date
-    {
-        return moment().toDate();
-    }
-
     export function IsValidDate(testDate:Date) : Boolean
     {
         return testDate 
