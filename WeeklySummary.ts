@@ -7,6 +7,7 @@ import { NextActionsDAL } from "./DAL/NextActionsDAL"
 import { TotalPointsForAWeek } from "./Models/Visualizations/TotalPointsForAWeek";
 import { INextActionDataAccessor } from "./DAL/INextActionDataAccessor";
 import { DateHelper } from "./Helpers/DateHelper"
+import { DateAccessor } from "./DAL/DateAccessor";
 const QuickChart = require("quickchart-js");
 
 export module WeeklySummary {
@@ -22,15 +23,17 @@ export module WeeklySummary {
         targetDate:string;
         lastUpdated:string;
         deepLink:string;
+        resolutionDate:string;
 
         constructor(action: NextAction) {
             this.name = action.name;
-            this.createdDate = action.createdDate ? action.createdDate.toDateString() : "Not Set";
+            this.createdDate = DateHelper.IsDateValid(action.createdDate) ? action.createdDate.toDateString() : "Not Set";
             this.theme = action.theme;
             this.isDone = action.isDone ? "Done" : "Not Done";
             this.points = action.points.toString();
-            this.targetDate = action.targetDate ? action.targetDate.toDateString() : "Not Set";
-            this.lastUpdated = action.lastUpdated ? action.lastUpdated.toDateString() : "Not Set";
+            this.targetDate = DateHelper.IsDateValid(action.targetDate) ? action.targetDate.toDateString() : "Not Set";
+            this.lastUpdated = DateHelper.IsDateValid(action.lastUpdated) ? action.lastUpdated.toDateString() : "Not Set";
+            this.resolutionDate = DateHelper.IsDateValid(action.resolutionDate) ? action.resolutionDate.toDateString() : "Not Set";
             this.deepLink = `<a href=\"https://www.appsheet.com/start/7484608b-c4e2-4cd4-a831-fd999d96aa19#appName=FocusManager-5502006&row=${action.id}&table=Next+Actions&view=Next+Actions_Detail\">Link</a>`;
         }
     }
@@ -53,42 +56,43 @@ export module WeeklySummary {
     export async function RunWeeklySummary(nextActionsAccessor: INextActionDataAccessor) {
         let nextActions = await nextActionsAccessor.GetRows();
 
-        let createdThisWeek = nextActions.filter((action) => action.createdDate > DateHelper.DaysAgo(7) && action.isDone !== true);
+        let createdThisWeek = nextActions.filter((action) => action.createdDate > DateAccessor.GetDateXDaysFromNow(-7) && action.isDone !== true);
         let createdThisWeekViewModel = [];
         createdThisWeek.forEach((action) =>
         createdThisWeekViewModel.push(new ActionSummaryViewModel(action))
         );
 
-        let completedThisWeek = nextActions.filter((action) => action.resolutionDate > DateHelper.DaysAgo(7) && action.isDone === true);
+        let completedThisWeek = nextActions.filter((action) => action.resolutionDate > DateAccessor.GetDateXDaysFromNow(-7) && action.isDone === true);
         let completedThisWeekViewModel = [];
         completedThisWeek.forEach((action) =>
             completedThisWeekViewModel.push(new ActionSummaryViewModel(action))
         );
 
-        let pastDue = nextActions.filter((action) => DateHelper.IsValidDate(action.targetDate) && action.targetDate < DateHelper.CurrentTime() && action.isDone !== true);
+        let pastDue = nextActions.filter((action) => DateHelper.IsValidDate(action.targetDate) && action.targetDate < DateAccessor.Today() && action.isDone !== true);
         let pastDueViewModel = [];
         pastDue.forEach((action) =>
             pastDueViewModel.push(new ActionSummaryViewModel(action))
         );
 
-        let staleWindow = DateHelper.DaysAgo(30);
+        let staleWindow = DateAccessor.GetDateXDaysFromNow(-30);
         let stale = nextActions.filter((action) => DateHelper.IsValidDate(action.lastUpdated) && action.lastUpdated < staleWindow && action.isDone !== true);
         let staleViewModel = [];
         stale.forEach((action) =>
             staleViewModel.push(new ActionSummaryViewModel(action))
         );
 
-        let pointsByWeek = GetTotalPointsByWeek(nextActions);
+        let pointsByWeek = GetTotalPointsByWeek(nextActions.filter((action) => action.resolutionDate > DateAccessor.GetDateXDaysFromNow(-56) && action.isDone === true));
         let velocityChartUrl = GetWeeklyVelocityChart(pointsByWeek);
 
         let velocityChartHtml = "<img src=\"" + velocityChartUrl + "\" />"
 
 
-        let html = "<html><body><h2>Created this Week</h2>" + HtmlTableWriter(createdThisWeekViewModel, ["name", "createdDate", "theme", "points", "deepLink" ])
-            + "<br/><h2>Completed this Week</h2>" + HtmlTableWriter(completedThisWeekViewModel, ["name","points", "theme", "deepLink"  ])  
+        let html = "<html><body><h2>Created (and not finished) this Week</h2>" + HtmlTableWriter(createdThisWeekViewModel, ["name", "createdDate", "theme", "points", "deepLink" ])
+            + "<br/><h2>Completed this Week</h2>" + HtmlTableWriter(completedThisWeekViewModel, ["name","points", "resolutionDate", "theme", "deepLink"  ])  
+            + "<br/><h2>Weekly Velocity Chart</h2>" + velocityChartHtml +"<br/>"
             + "<br/><h2>Past Due</h2>" + HtmlTableWriter(pastDueViewModel, ["name","points", "theme", "targetDate", "deepLink"  ]) +"<br/>" 
             + "<br/><h2>Stale</h2>" + HtmlTableWriter(staleViewModel, ["name","points", "theme", "lastUpdated", "deepLink" ]) +"<br/>" 
-            + velocityChartHtml + "</body></html>";
+            + "</body></html>";
 
         return html;
     }
