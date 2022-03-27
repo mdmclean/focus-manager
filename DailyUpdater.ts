@@ -3,10 +3,13 @@ import { NextAction } from "./Models/Sheets/NextAction";
 import { DateAccessor } from "./DAL/DateAccessor";
 import { INextActionDataAccessor } from "./DAL/INextActionDataAccessor";
 import { DateHelper } from "./Helpers/DateHelper";
+import { IRecurringEventDataAccessor } from "./DAL/IRecurringEventDataAccessor";
+import { RecurringActionSheetsAPIDAL } from "./DAL/RecurringActionSheetsAPIDAL";
+import { RecurringActionUpdater } from "./RecurringActionsUpdater";
 
 
 export module Updater {
-  export async function DailyUpdater(nextActionsAccessor: INextActionDataAccessor) {
+  export async function DailyUpdater(nextActionsAccessor: INextActionDataAccessor, recurringActionAccessor: IRecurringEventDataAccessor) {
 
     var nextActions = await nextActionsAccessor.GetRows();
 
@@ -17,6 +20,9 @@ export module Updater {
     nextActions = UpdateDisplayOrder(nextActions, "Work");
 
     await CommitChanges(nextActionsAccessor, nextActions);
+
+    // update recurring actions
+    await RecurringActionUpdater.AddRecurringActions(nextActionsAccessor, recurringActionAccessor);
   }
 
   function UpdateDisplayOrder(nextActions: NextAction[], targetTheme: string): NextAction[] {

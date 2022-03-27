@@ -1,6 +1,7 @@
 import { Updater } from "./DailyUpdater";
 import { GoogleSheetsClient } from "./DAL/GoogleSheetsClient";
 import { NextActionsSheetsAPIDAL } from "./DAL/NextActionsSheetsAPIDAL";
+import { RecurringActionSheetsAPIDAL } from "./DAL/RecurringActionSheetsAPIDAL";
 import { SendGridDAL } from "./DAL/SendGridDAL";
 import { NextActionHelper } from "./Helpers/NextActionHelper";
 import { NextAction } from "./Models/Sheets/NextAction";
@@ -11,11 +12,12 @@ export async function CloudFunctionTest(req, res) {
     let sheetsClientBuilder = new GoogleSheetsClient();
     let authenticatedSheetsClient = sheetsClientBuilder.GetAuthenticatedAPIObject();
     let nextActionsAccessor = new NextActionsSheetsAPIDAL(authenticatedSheetsClient);
+    let recurringActionsAccessor = new RecurringActionSheetsAPIDAL(authenticatedSheetsClient);
 
     switch (req.method) {
         case 'POST':
             if (req.body.function === "DailyUpdater") {
-                Updater.DailyUpdater(nextActionsAccessor);
+                Updater.DailyUpdater(nextActionsAccessor, recurringActionsAccessor);
             }
             else if (req.body.function === "WeeklySummary") {
                 let summaryHtml = await WeeklySummary.RunWeeklySummary(nextActionsAccessor);
