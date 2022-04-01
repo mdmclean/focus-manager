@@ -1,4 +1,5 @@
 import { Updater } from "./DailyUpdater";
+import { FocusSheetsAPIDAL } from "./DAL/FocusSheetsAPIDAL";
 import { GoogleSheetsClient } from "./DAL/GoogleSheetsClient";
 import { NextActionsSheetsAPIDAL } from "./DAL/NextActionsSheetsAPIDAL";
 import { RecurringActionSheetsAPIDAL } from "./DAL/RecurringActionSheetsAPIDAL";
@@ -13,6 +14,7 @@ export async function CloudFunctionTest(req, res) {
     let authenticatedSheetsClient = sheetsClientBuilder.GetAuthenticatedAPIObject();
     let nextActionsAccessor = new NextActionsSheetsAPIDAL(authenticatedSheetsClient);
     let recurringActionsAccessor = new RecurringActionSheetsAPIDAL(authenticatedSheetsClient);
+    let focusAccessor = new FocusSheetsAPIDAL(authenticatedSheetsClient);
 
     switch (req.method) {
         case 'POST':
@@ -20,7 +22,7 @@ export async function CloudFunctionTest(req, res) {
                 Updater.DailyUpdater(nextActionsAccessor, recurringActionsAccessor);
             }
             else if (req.body.function === "WeeklySummary") {
-                let summaryHtml = await WeeklySummary.RunWeeklySummary(nextActionsAccessor);
+                let summaryHtml = await WeeklySummary.RunWeeklySummary(nextActionsAccessor, focusAccessor);
                 let sendGridDAL = new SendGridDAL();
                 await sendGridDAL.SendEmail("Weekly Summary", summaryHtml);
             }
