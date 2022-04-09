@@ -185,7 +185,7 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
         if (callCounter === 50) { // TODO - better back off strategy AND/OR use the batch update Google Sheets API 
           let endTime:Date = DateAccessor.Today();
           let executionDuration:number = (endTime.getTime() - startTime.getTime())/1000;
-          let sleepTime:number = Math.min(60 - executionDuration, 0);
+          let sleepTime:number = Math.max(60 - executionDuration, 0);
 
           console.log('start sleep ' + sleepTime);
           await this.delay(1000 * sleepTime); // sleep for the rest of the minute
