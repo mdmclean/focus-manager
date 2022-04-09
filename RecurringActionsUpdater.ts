@@ -10,7 +10,7 @@ export module RecurringActionUpdater {
 
   export async function AddRecurringActions(naAccessor: INextActionDataAccessor, raAccessor: IRecurringEventDataAccessor) {
 
-    let recurringActions: RecurringAction[] = raAccessor.GetRows();
+    let recurringActions: RecurringAction[] = await raAccessor.GetRows();
 
     await recurringActions.forEach(async (row) => {
       if (row.nextOccurrence < DateAccessor.Today()) {

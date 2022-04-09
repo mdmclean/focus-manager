@@ -34,13 +34,13 @@ export class RecurringActionSheetsAPIDAL implements IRecurringEventDataAccessor 
             {
                 let id: string = row[columnIndices_ZeroIndexed.id];
                 let targetTheme: string = row[columnIndices_ZeroIndexed.targetTheme];
-                let frequencyInDays: number = row[columnIndices_ZeroIndexed.frequencyInDays];
-                let nextOccurrence: Date = row[columnIndices_ZeroIndexed.nextOccurrence];
+                let frequencyInDays: number = parseInt(row[columnIndices_ZeroIndexed.frequencyInDays]);
+                let nextOccurrence: Date = GoogleSheetsHelper.ConvertGoogleSheetsDateStringToDate(row[columnIndices_ZeroIndexed.nextOccurrence]);
                 let name: string = row[columnIndices_ZeroIndexed.name];
                 let description: string = row[columnIndices_ZeroIndexed.description];
-                let priority: number = row[columnIndices_ZeroIndexed.priority];
+                let priority: number = parseInt(row[columnIndices_ZeroIndexed.priority]);
                 let childOf: string = row[columnIndices_ZeroIndexed.childOf];
-                let points: number = row[columnIndices_ZeroIndexed.points];    
+                let points: number = parseInt(row[columnIndices_ZeroIndexed.points]);    
 
                 return new RecurringAction(id, targetTheme, frequencyInDays, nextOccurrence, name, description, priority, childOf, 
                     rowNumber + 1, // row 0 is header
