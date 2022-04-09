@@ -227,34 +227,7 @@ export module WeeklySummary {
 
         datasets = datasets.sort((x, y) => y.data.reduce((a, b) => a + b, 0) - x.data.reduce((a, b) => a + b, 0));
 
-
-        // string array of 20 different color hexcodes 
-        const maroonHex = "#800000";
-        const brownHex = "#9A6324";
-        const tealHex = "#469990";
-        const navyHex = "#000075";
-        const redHex = "#e6194B";
-        const orangeHex = "#f58231";
-        const yellowHex = "#ffe119";
-        const greenHex = "#3cb44b";
-        const cyanHex = "#42d4f4";
-        const blueHex = "#4363d8";
-        const magentaHex = "#f032e6";
-        const pinkHex   = "#fabed4";
-        const purpleHex = "#911eb4";
-        const beigeHex = "#fffac8";
-        const mintHex = "#aaffc3";
-        const lavendarHex = "#dcbeff";
-        const oliveHex = "#808000";
-        const appricotHex = "#FF69B4";
-        const salmonHex = "#ffd8b1";
-        const limeHex = "#bfef45";
-
-        let colors = [maroonHex, tealHex, purpleHex, limeHex, orangeHex, navyHex, yellowHex, brownHex,   redHex, greenHex, salmonHex, magentaHex, cyanHex, pinkHex, blueHex,  beigeHex, lavendarHex, mintHex, appricotHex,  oliveHex];
-
-        for (let i = 0; i < datasets.length; i++) {
-            datasets[i].backgroundColor = colors[i % colors.length];
-        }
+        datasets = ColourDatasets(datasets);
 
         const weeklyVelocityChart = new QuickChart();
         weeklyVelocityChart.setConfig({
@@ -280,6 +253,38 @@ export module WeeklySummary {
 
         return chartUrl;
     }    
+
+
+    function ColourDatasets(datasets: any[]) {
+        const maroonHex = "#800000";
+        const brownHex = "#9A6324";
+        const tealHex = "#469990";
+        const navyHex = "#000075";
+        const redHex = "#e6194B";
+        const orangeHex = "#f58231";
+        const yellowHex = "#ffe119";
+        const greenHex = "#3cb44b";
+        const cyanHex = "#42d4f4";
+        const blueHex = "#4363d8";
+        const magentaHex = "#f032e6";
+        const pinkHex = "#fabed4";
+        const purpleHex = "#911eb4";
+        const beigeHex = "#fffac8";
+        const mintHex = "#aaffc3";
+        const lavendarHex = "#dcbeff";
+        const oliveHex = "#808000";
+        const appricotHex = "#FF69B4";
+        const salmonHex = "#ffd8b1";
+        const limeHex = "#bfef45";
+
+        let colors = [maroonHex, tealHex, purpleHex, limeHex, orangeHex, navyHex, yellowHex, brownHex, redHex, greenHex, salmonHex, magentaHex, cyanHex, pinkHex, blueHex, beigeHex, lavendarHex, mintHex, appricotHex, oliveHex];
+
+        for (let i = 0; i < datasets.length; i++) {
+            datasets[i].backgroundColor = colors[i % colors.length];
+        }
+
+        return datasets;
+    }
 }
 
 
