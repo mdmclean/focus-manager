@@ -5,18 +5,30 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Mocha All",
             "program": "${workspaceFolder}\\node_modules\\mocha\\bin\\_mocha",
             "preLaunchTask": "tsc: build - tsconfig.json",
             "args": [
-                "--require", "ts-node/register",
-                "-u", "tdd",
-                "--timeout", "999999",
-                "--colors", "--recursive",
+                "--require",
+                "ts-node/register",
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "--recursive",
                 "${workspaceFolder}\\test\\**\\*.ts"
-            ], 
+            ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",
         },
@@ -41,11 +53,14 @@
             "program": "${workspaceFolder}\\node_modules\\mocha\\bin\\_mocha",
             "preLaunchTask": "tsc: build - tsconfig.json",
             "args": [
-                "--require", "ts-node/register",
-                "-u", "tdd",
-                "--colors", "--no-timeouts",
+                "--require",
+                "ts-node/register",
+                "-u",
+                "tdd",
+                "--colors",
+                "--no-timeouts",
                 "${relativeFile}",
-            ], 
+            ],
             "cwd": "${workspaceRoot}",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
@@ -57,15 +72,17 @@
             "program": "${workspaceFolder}\\node_modules\\mocha\\bin\\_mocha",
             "preLaunchTask": "tsc: build - tsconfig.json",
             "args": [
-                "--require", "ts-node/register",
-                "-u", "tdd",
-                "--colors", "--no-timeouts",
+                "--require",
+                "ts-node/register",
+                "-u",
+                "tdd",
+                "--colors",
+                "--no-timeouts",
                 "test\\integrationtests-sheetsapi.ts",
-            ], 
+            ],
             "cwd": "${workspaceRoot}",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
         },
-
     ]
 }

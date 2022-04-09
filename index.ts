@@ -7,6 +7,7 @@ import { SendGridDAL } from "./DAL/SendGridDAL";
 import { NextActionHelper } from "./Helpers/NextActionHelper";
 import { NextAction } from "./Models/Sheets/NextAction";
 import { WeeklySummary } from "./WeeklySummary";
+import jwtDecode from "jwt-decode";
 
 export async function CloudFunctionTest(req, res) {
 
@@ -16,6 +17,8 @@ export async function CloudFunctionTest(req, res) {
     let recurringActionsAccessor = new RecurringActionSheetsAPIDAL(authenticatedSheetsClient);
     let focusAccessor = new FocusSheetsAPIDAL(authenticatedSheetsClient);
 
+    const callerDetails:any = jwtDecode(req.headers.authorization);
+    console.log(`Called by ${callerDetails.email}`)
     switch (req.method) {
         case 'POST':
             if (req.body.function === "DailyUpdater") {
@@ -35,7 +38,9 @@ export async function CloudFunctionTest(req, res) {
             {
                 console.log(`incorrect procedure call - ${req.body.function}`);
             }
+            break; 
         default:
+            console.log(`incorrect method call - ${req.method}`);
             break;
     }
     res.status(200).send("OK");

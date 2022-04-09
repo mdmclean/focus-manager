@@ -9,3 +9,5 @@ test/integrationtests-sheetsapi.ts
 **/*.js.map
 sendgrid_cred.json
 test/weeklySummary.html
+work-forwarder-key.json
+get-token-for-calling-function.py
