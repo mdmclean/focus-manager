@@ -22,6 +22,7 @@ export class RecurringActionDAL implements IRecurringEventDataAccessor {
                 let priority: number = row[columnIndices_ZeroIndexed.priority];
                 let childOf: string = row[columnIndices_ZeroIndexed.childOf];
                 let points: number = row[columnIndices_ZeroIndexed.points];
+                let countOfMissedOccurrences: number = row[columnIndices_ZeroIndexed.countOfMissedOccurrences];
 
                 return new RecurringAction(
                     id,
@@ -33,7 +34,8 @@ export class RecurringActionDAL implements IRecurringEventDataAccessor {
                     priority,
                     childOf,
                     rowNumber + 1, // row 0 is header
-                    points
+                    points,
+                    countOfMissedOccurrences
                 )
             }
         );
@@ -51,7 +53,8 @@ export class RecurringActionDAL implements IRecurringEventDataAccessor {
         updatedRecurringAction.description,
         updatedRecurringAction.priority,
         updatedRecurringAction.childOf,
-        updatedRecurringAction.points
+        updatedRecurringAction.points,
+        updatedRecurringAction.countOfMissedOccurrences
     ]];
 
     let numberOfColumns = newValue[0].length;

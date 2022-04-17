@@ -9,6 +9,7 @@ export class RecurringAction {
     childOf: string; 
     rowZeroIndexed: number;
     points: number;
+    countOfMissedOccurrences: number;
 
     constructor(id: string,
         targetTheme: string,
@@ -19,7 +20,8 @@ export class RecurringAction {
         priority: number,
         childOf: string,
         rowZeroIndexed: number,
-        points: number
+        points: number,
+        countOfMissedOccurrences: number
     ) {
         this.id = id; 
         this.targetTheme = targetTheme;
@@ -31,5 +33,6 @@ export class RecurringAction {
         this.childOf = childOf; 
         this.rowZeroIndexed = rowZeroIndexed; 
         this.points = points;
+        this.countOfMissedOccurrences = countOfMissedOccurrences;
     }
 }

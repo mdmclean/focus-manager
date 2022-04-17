@@ -22,7 +22,7 @@ export module Updater {
     await CommitChanges(nextActionsAccessor, nextActions);
 
     // update recurring actions
-    await RecurringActionUpdater.AddRecurringActions(nextActionsAccessor, recurringActionAccessor);
+    await RecurringActionUpdater.AddRecurringActions(nextActionsAccessor, recurringActionAccessor, nextActions);
   }
 
   function UpdateDisplayOrder(nextActions: NextAction[], targetTheme: string): NextAction[] {
