@@ -15,7 +15,7 @@ export module RecurringActionUpdater {
     await recurringActions.forEach(async (row) => {
       if (row.nextOccurrence < DateAccessor.Today()) {
 
-        let newAction: NextAction = NextActionHelper.CreateActionWithDefaults(row.name, row.description, row.priority, row.childOf, row.targetTheme, row.points, 5, 3);
+        let newAction: NextAction = NextActionHelper.CreateActionWithDefaults(row.name, row.description, row.priority, row.childOf, row.targetTheme, row.points, row.priority, row.priority, "Triage");
         let exsitingRecurringAction:NextAction = existingNextActions.find(na => na.isDone === false && na.name === newAction.name && na.theme === newAction.theme);
 
         if (exsitingRecurringAction === undefined) {

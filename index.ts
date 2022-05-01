@@ -31,7 +31,7 @@ export async function CloudFunctionTest(req, res) {
             }
             else if (req.body.function === "AddAction") {
                 let newAction: NextAction = NextActionHelper.CreateActionWithDefaults(req.body.name,
-                    req.body.description, req.body.priority, req.body.childOf, req.body.theme, req.body.points, req.body.urgency, req.body.importance);
+                    req.body.description, req.body.priority, req.body.childOf, req.body.theme, req.body.points, req.body.urgency, req.body.importance, "Triage");
                 await nextActionsAccessor.AddRow(newAction);
             }
             else

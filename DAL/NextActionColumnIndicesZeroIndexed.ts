@@ -23,7 +23,8 @@ export module NextActionColumnIndicesZeroIndex {
             urgency: 18,
             importance: 19,
             blockedBy: 20,
-            blocks: 21
+            blocks: 21,
+            state: 22
         };
     }
 }

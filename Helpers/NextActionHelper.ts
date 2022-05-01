@@ -2,7 +2,7 @@ import { DateAccessor } from "../DAL/DateAccessor";
 import { NextAction } from "../Models/Sheets/NextAction";
 
 export module NextActionHelper {
-    export function CreateActionWithDefaults(name: string, description: string, priority: number, childOf: string, targetTheme: string, points: number, urgency: number, importance:number) : NextAction{
+    export function CreateActionWithDefaults(name: string, description: string, priority: number, childOf: string, targetTheme: string, points: number, urgency: number, importance:number, state:string) : NextAction{
 
         const effortCount = 0;
         const targetDate = null;
@@ -43,7 +43,8 @@ export module NextActionHelper {
           urgency,
           importance,
           blockedBy,
-          blocks
+          blocks,
+          state
         );
     
         return newRow;

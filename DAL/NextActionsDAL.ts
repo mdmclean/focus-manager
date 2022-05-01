@@ -45,6 +45,7 @@ export class NextActionsDAL implements INextActionDataAccessor {
                 let importance: number = row[colIndices.importance];
                 let blockedBy:string = row[colIndices.blockedBy];
                 let blocks:string = row[colIndices.blocks];
+                let state:string = row[colIndices.state];
 
                 return new NextAction(
                     id,
@@ -69,7 +70,8 @@ export class NextActionsDAL implements INextActionDataAccessor {
                     urgency,
                     importance,
                     blockedBy,
-                    blocks
+                    blocks,
+                    state
                 )
             }
         );

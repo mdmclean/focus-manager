@@ -27,6 +27,7 @@ export class NextAction {
     blockedBy: string; 
     blocks: string;
     updated: boolean;
+    state: string;
 
     constructor(id: string,
         name: string,
@@ -50,7 +51,8 @@ export class NextAction {
         urgency: number,
         importance: number,
         blockedBy: string,
-        blocks: string
+        blocks: string,
+        state: string
     ) {
         this.id = id; 
         this.name = name;
@@ -69,7 +71,7 @@ export class NextAction {
         this.link = link;
         this.displayOrder = displayOrder;
         this.snoozeUntil = snoozeUntil;
-        this.orderingWeightingScore = PrioritizationWeighting(snoozeUntil, lastUpdated, displayOrder, priority, targetDate, urgency, importance, blockedBy, points);
+        this.orderingWeightingScore = PrioritizationWeighting(snoozeUntil, lastUpdated, displayOrder, priority, targetDate, urgency, importance, blockedBy, points, state);
         this.resolutionDate = resolutionDate;
         this.createdDate = createdDate;
         this.urgency = urgency;
@@ -77,10 +79,11 @@ export class NextAction {
         this.blockedBy = blockedBy;
         this.blocks = blocks;
         this.updated = false;
+        this.state = state;
     }
 }
 
-function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrder:number, priority:number, targetDate:Date, urgency:number, importance:number, blockedBy:string, points:number) : number
+function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrder:number, priority:number, targetDate:Date, urgency:number, importance:number, blockedBy:string, points:number, state:string) : number
 {
   let daysSinceUpdated:number = 0;
   if (DateHelper.IsDateValid(snoozeUntil) && snoozeUntil > DateAccessor.Today())
@@ -106,8 +109,10 @@ function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrde
 
   let isBlockedBump:number = blockedBy !== "" && blockedBy !== undefined ? 1000 : 0;
 
-  let zeroPointReminderBump = points === 0 ? 100 : 0;
+  let zeroPointReminderBump = points === 0 ? 100 : 0; // if the action is a reminder / trivial to complete, bump it up
 
-  return daysSinceUpdated + displayOrder + priority + daysUntilDoneSnoozing*1000 - daysPastTargetDate - sanitizedUrgency*10 - sanitizedImportance*5 + isBlockedBump - zeroPointReminderBump;
+  let triageBump = state == "Triage" ? 0 : 1000; // bump up tickets that are not actionable so that they can be made actionable
+
+  return daysSinceUpdated + displayOrder + priority + daysUntilDoneSnoozing*1000 - daysPastTargetDate - sanitizedUrgency*10 - sanitizedImportance*5 + isBlockedBump - zeroPointReminderBump - triageBump;
 }
 

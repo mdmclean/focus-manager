@@ -60,6 +60,7 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
         let importance: number = parseInt(row[colIndices.importance]);
         let blockedBy: string = row[colIndices.blockedBy];
         let blocks: string = row[colIndices.blocks];
+        let state:string = row[colIndices.state];
 
 
         return new NextAction(
@@ -85,7 +86,8 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
           urgency,
           importance,
           blockedBy,
-          blocks
+          blocks,
+          state
         )
       }
     );
@@ -168,6 +170,7 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
     nextActionRow.push(nextAction.importance);
     nextActionRow.push(nextAction.blockedBy);
     nextActionRow.push(nextAction.blocks);
+    nextActionRow.push(nextAction.state);
 
     return nextActionRow;
   }
