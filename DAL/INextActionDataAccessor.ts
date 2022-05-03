@@ -5,4 +5,5 @@ export interface INextActionDataAccessor {
     Update(action:NextAction);
     AddRow(action:NextAction) ;
     UpdateRows(actions:NextAction[]);
+    UpdateComputedFields(nextAction: NextAction);
 }

@@ -95,6 +95,40 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
     return nextActions;
   }
 
+  private async SendUpdateRequest (request:sheets_v4.Params$Resource$Spreadsheets$Values$Update) {
+    try {
+      await this.sheetsAccessor.spreadsheets.values.update(request);
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
+
+  async UpdateComputedFields(nextAction: NextAction) {
+    let displayOrderInput = { 
+      values: [[nextAction.displayOrder]]
+    };
+    let displayOrderRequest = {
+      spreadsheetId: this.spreadsheetId,
+      range: `${this.sheetName}!O${nextAction.rowZeroIndexed+1}:O${nextAction.rowZeroIndexed+1}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: displayOrderInput
+    }
+    await this.SendUpdateRequest(displayOrderRequest);
+
+    let blockingRelationshipInput = { 
+      values: [[nextAction.blockedBy, nextAction.blocks]]
+    };
+
+    let blockingRelationshipRequest = {
+      spreadsheetId: this.spreadsheetId,
+      range: `${this.sheetName}!U${nextAction.rowZeroIndexed+1}:V${nextAction.rowZeroIndexed+1}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: blockingRelationshipInput
+    }
+    await this.SendUpdateRequest(blockingRelationshipRequest);
+  }
+
   async Update(action: NextAction) {
     let nextActionRow = this.buildRowForNextActions(action);
     let valuesForInput = [];
@@ -111,12 +145,7 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
       resource: resource
     }
 
-    try {
-      await this.sheetsAccessor.spreadsheets.values.update(request);
-    }
-    catch (e) {
-      console.error(e);
-    }
+    await this.SendUpdateRequest(request);
   }
 
   async AddRow(action:NextAction, targetTable:string=this.sheetName) {
@@ -181,8 +210,8 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
     let startTime:Date = DateAccessor.Today();
 
     for (var i = 0; i < actions.length; i++) {
-        await this.Update(actions[i]);  
-        callCounter += 1;
+        await this.UpdateComputedFields(actions[i]);  
+        callCounter += 2; // two ranges updated as part of only targetting computed fields
 
           // 60 calls per minute rate limit 
         if (callCounter === 50) { // TODO - better back off strategy AND/OR use the batch update Google Sheets API 

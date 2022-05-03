@@ -5,6 +5,9 @@ import { INextActionDataAccessor } from "./INextActionDataAccessor"
 import { DateHelper } from "../Helpers/DateHelper";
 
 export class NextActionsDAL implements INextActionDataAccessor {
+    UpdateComputedFields(nextAction: NextAction) {
+        throw new Error("Method not implemented.");
+    }
     
     UpdateRows(actions: NextAction[]) {
         throw new Error("Method not implemented.");
