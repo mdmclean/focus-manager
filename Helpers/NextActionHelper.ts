@@ -7,17 +7,23 @@ export module NextActionHelper {
         const effortCount = 0;
         const targetDate = null;
         const display = true;
-        const isDone = false;
+        let isDone:boolean = false;
         const lastUpdated = DateAccessor.Today();
         const displayOrder = 1;
         const link = "";
         const snoozeUntil = null;
-        const resolutionDate = null;
+        let resolutionDate:Date = null;
         const createdDate = DateAccessor.Today();
         const blockedBy = "";
         const blocks = "";
         const id = "Set later"; // set later
         const rowZeroIndexed = -1; // set later
+
+        if (state == "Done")
+        {
+          resolutionDate = DateAccessor.Today();
+          isDone = true;
+        }
     
     
         let newRow: NextAction = new NextAction(
