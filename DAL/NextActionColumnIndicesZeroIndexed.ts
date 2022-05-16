@@ -24,7 +24,10 @@ export module NextActionColumnIndicesZeroIndex {
             importance: 19,
             blockedBy: 20,
             blocks: 21,
-            state: 22
+            state: 22,
+            wellBeing: 23,
+            isDeepWork: 24,
+            source: 25
         };
     }
 }

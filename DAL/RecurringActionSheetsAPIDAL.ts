@@ -41,10 +41,11 @@ export class RecurringActionSheetsAPIDAL implements IRecurringEventDataAccessor 
                 let childOf: string = row[columnIndices_ZeroIndexed.childOf];
                 let points: number = parseInt(row[columnIndices_ZeroIndexed.points]);    
                 let countOfMissedOccurrences: number = parseInt(row[columnIndices_ZeroIndexed.countOfMissedOccurrences]);
+                let wellBeing: string = row[columnIndices_ZeroIndexed.wellBeing];
 
                 return new RecurringAction(id, targetTheme, frequencyInDays, nextOccurrence, name, description, priority, childOf, 
                     rowNumber + 1, // row 0 is header
-                    points, countOfMissedOccurrences);
+                    points, countOfMissedOccurrences, wellBeing);
             }
         )
 
@@ -88,6 +89,7 @@ export class RecurringActionSheetsAPIDAL implements IRecurringEventDataAccessor 
         recurringActionRow.push(recurringAction.childOf);
         recurringActionRow.push(recurringAction.points);        
         recurringActionRow.push(recurringAction.countOfMissedOccurrences);
+        recurringActionRow.push(recurringAction.wellBeing);
     
         return recurringActionRow;
     }

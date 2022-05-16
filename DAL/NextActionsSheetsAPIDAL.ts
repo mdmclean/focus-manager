@@ -61,6 +61,9 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
         let blockedBy: string = row[colIndices.blockedBy];
         let blocks: string = row[colIndices.blocks];
         let state:string = row[colIndices.state];
+        let wellBeing:string = row[colIndices.wellBeing];
+        let isDeepWork:boolean = row[colIndices.isDeepWork] === 'TRUE' ? true : false;
+        let source:string = row[colIndices.source];
 
 
         return new NextAction(
@@ -87,7 +90,10 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
           importance,
           blockedBy,
           blocks,
-          state
+          state,
+          wellBeing,
+          isDeepWork,
+          source
         )
       }
     );
@@ -200,6 +206,9 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
     nextActionRow.push(nextAction.blockedBy);
     nextActionRow.push(nextAction.blocks);
     nextActionRow.push(nextAction.state);
+    nextActionRow.push(nextAction.wellBeing);
+    nextActionRow.push(nextAction.isDeepWork ? 'TRUE' : 'FALSE');
+    nextActionRow.push(nextAction.source);
 
     return nextActionRow;
   }
@@ -214,7 +223,7 @@ export class NextActionsSheetsAPIDAL implements INextActionDataAccessor {
         callCounter += 2; // two ranges updated as part of only targetting computed fields
 
           // 60 calls per minute rate limit 
-        if (callCounter === 50) { // TODO - better back off strategy AND/OR use the batch update Google Sheets API 
+        if (callCounter >= 50) { // TODO - better back off strategy AND/OR use the batch update Google Sheets API 
           let endTime:Date = DateAccessor.Today();
           let executionDuration:number = (endTime.getTime() - startTime.getTime())/1000;
           let sleepTime:number = Math.max(60 - executionDuration, 0);

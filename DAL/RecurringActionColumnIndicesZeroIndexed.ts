@@ -11,7 +11,8 @@ export module RecurringActionColumnIndicesZeroIndex {
             priority: 6,
             childOf: 7,
             points: 8,
-            countOfMissedOccurrences: 9
+            countOfMissedOccurrences: 9,
+            wellBeing: 10  
         };
     }
 }

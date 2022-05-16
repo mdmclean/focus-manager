@@ -28,6 +28,9 @@ export class NextAction {
     blocks: string;
     updated: boolean;
     state: string;
+    wellBeing: string;
+    isDeepWork:boolean;
+    source: string;
 
     constructor(id: string,
         name: string,
@@ -52,7 +55,10 @@ export class NextAction {
         importance: number,
         blockedBy: string,
         blocks: string,
-        state: string
+        state: string,
+        wellBeing: string,
+        isDeepWork: boolean,
+        source: string
     ) {
         this.id = id; 
         this.name = name;
@@ -80,10 +86,14 @@ export class NextAction {
         this.blocks = blocks;
         this.updated = false;
         this.state = state;
+        this.wellBeing = wellBeing;
+        this.isDeepWork = isDeepWork;
+        this.source = source;
     }
 }
 
-function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrder:number, priority:number, targetDate:Date, urgency:number, importance:number, blockedBy:string, points:number, state:string) : number
+function PrioritizationWeighting(snoozeUntil:Date, lastUpdated:Date, displayOrder:number, priority:number, 
+  targetDate:Date, urgency:number, importance:number, blockedBy:string, points:number, state:string) : number
 {
   let daysSinceUpdated:number = 0;
   if (DateHelper.IsDateValid(snoozeUntil) && snoozeUntil > DateAccessor.Today())
